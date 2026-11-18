@@ -1,10 +1,22 @@
-name: Algo Paper Trading
+steps:
+  - name: Checkout Repository
+    uses: actions/checkout@v4
 
-'on': [workflow_dispatch]
+  - name: Setup Python
+    uses: actions/setup-python@v5
+    with:
+      python-version: '3.13'
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Test Python
-        run: echo "Algo Trading Started Successfully"
+  - name: Install Libraries
+    run: pip install yfinance pandas
+
+  - name: Run Algo Trading
+    run: python paper_trading.py
+
+  - name: Save Trading Data
+    run: |
+      git config user.name "github-actions[bot]"
+      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      git add paper_state.json
+      git commit -m "Update paper trading data" || echo "No changes"
+      git push
