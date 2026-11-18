@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Algo Trading Dashboard</title>
+
+<style>
+body {
+    margin: 0;
+    padding: 15px;
+    background: #101827;
+    color: white;
+    font-family: Arial;
+}
+
+h1 {
+    color: #00e5a0;
+    text-align: center;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.card {
+    background: #1d293b;
+    padding: 18px;
+    border-radius: 12px;
+}
+
+.label {
+    color: #aab5c5;
+    font-size: 13px;
+}
+
+.value {
+    font-size: 23px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.green { color: #00e5a0; }
+.red { color: #ff5252; }
+
+.section {
+    background: #1d293b;
+    padding: 15px;
+    border-radius: 12px;
+    margin-top: 18px;
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 400px;
+}
+
+td, th {
+    padding: 12px;
+    border-bottom: 1px solid #39465a;
+    text-align: left;
+}
+
+button {
+    background: #00c896;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 7px;
+    font-weight: bold;
+}
+
+.status {
+    color: #00e5a0;
+    text-align: center;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🚀 ALGO TRADING</h1>
+<p class="status" id="status">Loading Dashboard...</p>
+
+<div class="container">
+
+<div class="card">
+<div class="label">Starting Capital</div>
+<div class="value">₹10,000</div>
+</div>
+
+<div class="card">
+<div class="label">Available Cash</div>
+<div class="value green" id="cash">₹0</div>
+</div>
+
+<div class="card">
+<div class="label">Open Trades</div>
+<div class="value" id="open">0</div>
+</div>
+
+<div class="card">
+<div class="label">Closed Trades</div>
+<div class="value" id="closed">0</div>
+</div>
+
+<div class="card">
+<div class="label">Realized P&L</div>
+<div class="value" id="pnl">₹0</div>
+</div>
+
+<div class="card">
+<div class="label">Win Rate</div>
+<div class="value" id="winrate">0%</div>
+</div>
+
+</div>
+
+<div class="section">
+<h3>🟢 OPEN POSITIONS</h3>
+<table>
+<thead>
+<tr>
+<th>Stock</th>
+<th>Entry</th>
+<th>Quantity</th>
+<th>Stop Loss</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody id="positions"></tbody>
+</table>
+</div>
+
+<div class="section">
+<h3>📊 TRADE HISTORY</h3>
+<table>
+<thead>
+<tr>
+<th>Stock</th>
+<th>Entry</th>
+<th>Exit</th>
+<th>P&L</th>
+</tr>
+</thead>
+<tbody id="history"></tbody>
+</table>
+</div>
+
+<div class="section">
+<h3>⚙️ Dashboard Control</h3>
+<button onclick="loadData()">Refresh Data</button>
+<p id="updated">Last Update: --</p>
+</div>
+
+<script>
+
+async function loadData() {
+
+try {
+
+const response = await fetch(
+"paper_state.json?t=" + Date.now()
+);
+
+if (!response.ok) {
+throw new Error("Data not found");
+}
+
+const data = await response.json();
+
+document.getElementById("cash").innerText =
+"₹" + Number(data.cash).toFixed(2);
+
+const positions = data.positions || {};
+const history = data.history || [];
+
+document.getElementById("open").innerText =
+Object.keys(positions).length;
+
+document.getElementById("closed").innerText =
+history.length;
+
+const pnl = history.reduce(
+(sum, trade) => sum + Number(trade["P&L"] || 0), 0
+);
+
+const pnlElement = document.getElementById("pnl");
+
+pnlElement.innerText = "₹" + pnl.toFixed(2);
+
+pnlElement.className =
+"value " + (pnl >= 0 ? "green" : "red");
+
+const wins = history.filter(
+trade => Number(trade["P&L"]) > 0
+).length;
+
+const winrate = history.length
+? (wins / history.length * 100)
+: 0;
+
+document.getElementById("winrate").innerText =
+winrate.toFixed(1) + "%";
+
+let posHTML = "";
+
+for (const [stock, pos] of Object.entries(positions)) {
+
+posHTML += `
+<tr>
+<td>${stock}</td>
+<td>₹${Number(pos.entry).toFixed(2)}</td>
+<td>${pos.qty}</td>
+<td>₹${Number(pos.stop).toFixed(2)}</td>
+<td>₹${Number(pos.target).toFixed(2)}</td>
+</tr>
+`;
+
+}
+
+document.getElementById("positions").innerHTML =
+posHTML || "<tr><td colspan='5'>No Open Trades</td></tr>";
+
+let historyHTML = "";
+
+history.slice().reverse().forEach(trade => {
+
+const profit = Number(trade["P&L"] || 0);
+
+historyHTML += `
+<tr>
+<td>${trade.Stock}</td>
+<td>₹${Number(trade.Entry).toFixed(2)}</td>
+<td>₹${Number(trade.Exit).toFixed(2)}</td>
+<td class="${profit >= 0 ? "green" : "red"}">
+₹${profit.toFixed(2)}
+</td>
+</tr>
+`;
+
+});
+
+document.getElementById("history").innerHTML =
+historyHTML || "<tr><td colspan='4'>No Closed Trades</td></tr>";
+
+document.getElementById("status").innerText =
+"● Dashboard Connected";
+
+document.getElementById("updated").innerText =
+"Last Update: " + new Date().toLocaleString();
+
+} catch(error) {
+
+document.getElementById("status").innerText =
+"Dashboard Error: " + error.message;
+
+}
+
+}
+
+loadData();
+setInterval(loadData, 60000);
+
+</script>
+
+</body>
+</html>
