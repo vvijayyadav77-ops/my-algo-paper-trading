@@ -23,11 +23,26 @@ steps:
     with:
       python-version: '3.11'
 
-  - name: Install Dependencies
+  - name: Install Libraries
     run: |
-      pip install pandas yfinance
+      pip install yfinance pandas
 
-  - name: Run Paper Trading
+  - name: Check Python File
+    run: |
+      echo "CHECKING PYTHON FILE"
+      pwd
+      ls -l
+      head -n 10 paper_trading.py
+
+  - name: Run Algo
     run: |
       echo "STARTING PAPER TRADING"
       python paper_trading.py
+
+  - name: Save Trading Data
+    run: |
+      git config user.name "github-actions[bot]"
+      git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      git add paper_state.json
+      git commit -m "Update paper trading data" || echo "No changes"
+      git push
