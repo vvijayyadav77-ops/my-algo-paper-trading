@@ -1,39 +1,36 @@
-name: Algo Trading Workflow
+name: Algo Paper Trading
 
-on:
+"on":
   workflow_dispatch:
+  schedule:
+    - cron: "*/5 3-9 * * 1-5"
 
-# Git push karne ke liye write permission zaroori hai
 permissions:
   contents: write
 
 jobs:
-  test:
+  paper-trading:
     runs-on: ubuntu-latest
+
     steps:
-      # 1. Code ko runner par checkout karna zaroori hai
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Python setup karna
-      - name: Setup Python
+      - name: Python Setup
         uses: actions/setup-python@v5
         with:
-          python-version: '3.13'
+          python-version: "3.13"
 
-      # 3. Libraries install karna
       - name: Install Libraries
         run: pip install yfinance pandas
 
-      # 4. Main script run karna
-      - name: Run Algo Trading
+      - name: Run Algo
         run: python paper_trading.py
 
-      # 5. Data save karke push karna
-      - name: Save Trading Data
+      - name: Save Data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add paper_state.json
-          git commit -m "Update paper trading data" || echo "No changes"
+          git commit -m "Update paper state" || echo "No changes"
           git push
