@@ -210,4 +210,35 @@ print("\n===== CONTINUOUS PAPER TRADING =====")
 print("Start:", start_time)
 print("End:", end_time)
 
-while datetime.now() < end_ti
+while datetime.now() < end_time:
+
+    print("\nScan Time:", datetime.now())
+
+    for stock in STOCKS:
+        scan_stock(stock, state)
+
+    save_state(state)
+
+    print("\n===== PORTFOLIO =====")
+    print("Cash:", round(state["cash"], 2))
+    print("Open Trades:", len(state["positions"]))
+    print("Closed Trades:", len(state["history"]))
+
+    total_pnl = sum(
+        t["P&L"] for t in state["history"]
+    )
+
+    print("Total Realized P&L:", round(total_pnl, 2))
+
+    remaining = (end_time - datetime.now()).total_seconds()
+
+    if remaining > 0:
+        time.sleep(min(SCAN_INTERVAL, remaining))
+
+save_state(state)
+
+print("\n===== BOT STOPPED =====")
+print("Final Cash:", round(state["cash"], 2))
+
+if name == "main":
+main()
