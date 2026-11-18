@@ -1,1 +1,0 @@
-# my-algo-paper-trading
