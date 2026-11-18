@@ -3,7 +3,7 @@ import pandas as pd
 import json
 import os
 from datetime import datetime
-
+print("NEW PAPER TRADING CODE STARTED")
 CAPITAL = 10000
 RISK = 50
 MAX_TRADES = 2
