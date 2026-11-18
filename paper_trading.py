@@ -16,8 +16,8 @@ STOCKS = [
     "SBIN.NS",
     "TCS.NS",
     "INFY.NS",
-    "ITC.NS",
-    "TATAMOTORS.NS"
+    "TMPV.NS",
+"TMCV.NS"
 ]
 
 FILE = "paper_state.json"
