@@ -11,6 +11,11 @@ on:
 permissions:
   contents: write
 
+# Ye ensure karega ki ek time par sirf ek hi run chale aur git conflict na ho
+concurrency:
+  group: paper-trading-bot
+  cancel-in-progress: false
+
 jobs:
   run-bot:
     runs-on: ubuntu-latest
@@ -46,12 +51,18 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add paper_state.json
+          # Check karo ki file exist karti hai ya nahi
+          if [ -f paper_state.json ]; then
+            git add paper_state.json
 
-          if ! git diff --cached --quiet; then
-            git commit -m "Update paper trading data"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            # Check karo ki koi changes huye hain ya nahi
+            if ! git diff --cached --quiet; then
+              git commit -m "Update paper trading data"
+              git pull --rebase origin main
+              git push origin HEAD:main
+            else
+              echo "No changes to save"
+            fi 
           else
-            echo "No changes to save"
+            echo "paper_state.json not found. Skipping git push."
           fi
