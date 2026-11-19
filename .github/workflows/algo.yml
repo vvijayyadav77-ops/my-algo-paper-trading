@@ -36,11 +36,27 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install yfinance pandas
 
-      - name: Run Continuous Algo
+      - name: Run Bot and Publish Every Minute
+        shell: bash
         run: |
-          python -u paper_trading.py
+          python -u paper_trading.py &
+          BOT_PID=$!
 
-      - name: Save Trading Data
+          while kill -0 "$BOT_PID" 2>/dev/null; do
+            sleep 60
+
+            git add paper_state.json
+
+            if ! git diff --cached --quiet; then
+              git commit -m "Live paper trading update"
+              git pull --rebase origin main
+              git push origin HEAD:main
+            fi
+          done
+
+          wait "$BOT_PID"
+
+      - name: Final Save
         if: always()
         run: |
           git config user.name "github-actions[bot]"
@@ -49,7 +65,7 @@ jobs:
           git add paper_state.json
 
           if ! git diff --cached --quiet; then
-            git commit -m "Update paper trading data"
+            git commit -m "Final paper trading update"
             git pull --rebase origin main
             git push origin HEAD:main
           fi
