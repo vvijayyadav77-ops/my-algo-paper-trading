@@ -1,6 +1,13 @@
 name: Paper Trading Bot
 
 on:
+  schedule:
+    # 9:15 AM IST
+    - cron: '45 3 * * 1-5'
+
+    # 3:00 PM IST
+    - cron: '30 9 * * 1-5'
+
   workflow_dispatch:
 
 permissions:
@@ -13,19 +20,16 @@ concurrency:
 jobs:
   run-bot:
     runs-on: ubuntu-latest
-    timeout-minutes: 360
+    timeout-minutes: 350
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Install Libraries
         run: |
@@ -42,18 +46,10 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          if [ ! -f paper_state.json ]; then
-            echo "paper_state.json not found — nothing to save"
-            exit 0
-          fi
-
           git add paper_state.json
 
-          if git diff --cached --quiet; then
-            echo "No changes to save"
-            exit 0
+          if ! git diff --cached --quiet; then
+            git commit -m "Update paper trading data"
+            git pull --rebase origin main
+            git push origin HEAD:main
           fi
-
-          git commit -m "Update paper trading data $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git pull --rebase origin main
-          git push origin HEAD:main
