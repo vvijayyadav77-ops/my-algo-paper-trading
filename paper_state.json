@@ -1,19 +1,6 @@
 {
-    "cash": 6847.350082397461,
-    "positions": {
-        "TMCV.NS": {
-            "entry": 444.6499938964844,
-            "stop": 443.45001220703125,
-            "target": 446.44996643066406,
-            "qty": 4
-        },
-        "AXISBANK.NS": {
-            "entry": 1375.0,
-            "stop": 1372.0,
-            "target": 1379.5,
-            "qty": 1
-        }
-    },
+    "cash": 10008.970155639649,
+    "positions": {},
     "history": [
         {
             "Stock": "SBIN.NS",
@@ -134,6 +121,36 @@
             "Quantity": 1,
             "P&L": 0.6,
             "Time": "2026-11-19T14:43:11.890475+05:30"
+        },
+        {
+            "Stock": "TMCV.NS",
+            "Entry": 444.65,
+            "Exit": 445.6,
+            "Quantity": 4,
+            "Buy Value": 1778.6,
+            "Sell Value": 1782.4,
+            "Buy Brokerage": 0.0,
+            "Sell Brokerage": 0.89,
+            "Total Brokerage": 0.89,
+            "Gross P&L": 3.8,
+            "P&L": 2.91,
+            "Exit Reason": "FORCE SQUARE OFF",
+            "Time": "2026-11-19T15:59:07.563783+05:30"
+        },
+        {
+            "Stock": "AXISBANK.NS",
+            "Entry": 1375.0,
+            "Exit": 1380.8,
+            "Quantity": 1,
+            "Buy Value": 1375.0,
+            "Sell Value": 1380.8,
+            "Buy Brokerage": 0.0,
+            "Sell Brokerage": 0.69,
+            "Total Brokerage": 0.69,
+            "Gross P&L": 5.8,
+            "P&L": 5.11,
+            "Exit Reason": "FORCE SQUARE OFF",
+            "Time": "2026-11-19T15:59:07.944731+05:30"
         }
     ],
     "last_processed": {
@@ -268,5 +285,5 @@
             "updated": "2026-11-19T14:59:29.442575+05:30"
         }
     },
-    "updated": "2026-11-19T15:00:00.082224+05:30"
+    "updated": "2026-11-19T15:59:07.945613+05:30"
 }
