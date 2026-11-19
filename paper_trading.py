@@ -7,7 +7,7 @@ import time
 from datetime import datetime, time as dt_time
 from zoneinfo import ZoneInfo
 
-print("FAST ENTRY PAPER TRADING BOT V2 STARTED")
+print("PAPER TRADING BOT V4 STARTED")
 
 # =========================
 # SETTINGS
@@ -19,6 +19,9 @@ MAX_TRADES = 2
 TRADE_AMOUNT = 2000
 
 SCAN_INTERVAL = 30
+
+BROKERAGE_RATE = 0.0005
+MAX_BROKERAGE = 10
 
 IST = ZoneInfo("Asia/Kolkata")
 
@@ -42,6 +45,18 @@ STOCKS = [
 ]
 
 FILE = "paper_state.json"
+
+
+# =========================
+# BROKERAGE
+# =========================
+
+def calculate_brokerage(amount):
+
+    return round(
+        min(MAX_BROKERAGE, amount * BROKERAGE_RATE),
+        2
+    )
 
 
 # =========================
@@ -136,6 +151,151 @@ def get_data(stock):
 
 
 # =========================
+# CLOSE POSITION
+# =========================
+
+def close_position(state, stock, exit_price, reason):
+
+    if stock not in state["positions"]:
+        return
+
+    pos = state["positions"][stock]
+
+    qty = int(pos["qty"])
+
+    entry = float(pos["entry"])
+
+    buy_value = entry * qty
+
+    sell_value = exit_price * qty
+
+    buy_brokerage = float(
+        pos.get("buy_brokerage", 0)
+    )
+
+    sell_brokerage = calculate_brokerage(sell_value)
+
+    gross_pnl = (exit_price - entry) * qty
+
+    total_brokerage = (
+        buy_brokerage + sell_brokerage
+    )
+
+    net_pnl = gross_pnl - total_brokerage
+
+    # Return sale proceeds after sell brokerage
+
+    state["cash"] += (
+        sell_value - sell_brokerage
+    )
+
+    # Save trade history
+
+    state["history"].append({
+
+        "Stock": stock,
+
+        "Entry": round(entry, 2),
+
+        "Exit": round(exit_price, 2),
+
+        "Quantity": qty,
+
+        "Buy Value": round(buy_value, 2),
+
+        "Sell Value": round(sell_value, 2),
+
+        "Buy Brokerage": round(buy_brokerage, 2),
+
+        "Sell Brokerage": round(sell_brokerage, 2),
+
+        "Total Brokerage": round(total_brokerage, 2),
+
+        "Gross P&L": round(gross_pnl, 2),
+
+        "P&L": round(net_pnl, 2),
+
+        "Exit Reason": reason,
+
+        "Time": datetime.now(IST).isoformat()
+
+    })
+
+    print("\n===== POSITION CLOSED =====")
+
+    print("STOCK:", stock)
+    print("EXIT:", exit_price)
+    print("GROSS P&L:", round(gross_pnl, 2))
+    print("BROKERAGE:", round(total_brokerage, 2))
+    print("NET P&L:", round(net_pnl, 2))
+
+    del state["positions"][stock]
+
+    save_state(state)
+
+
+# =========================
+# FORCE SQUARE OFF
+# =========================
+
+def square_off_all(state):
+
+    print("\n===== FORCE SQUARE OFF =====")
+
+    for stock in list(state["positions"].keys()):
+
+        pos = state["positions"][stock]
+
+        exit_price = None
+
+        try:
+
+            df = get_data(stock)
+
+            if df is not None and not df.empty:
+
+                value = float(df["Close"].iloc[-1])
+
+                if value > 0:
+                    exit_price = value
+
+        except Exception as e:
+
+            print("PRICE ERROR:", stock, e)
+
+        # Fallback to saved dashboard price
+
+        if exit_price is None:
+
+            saved_price = state["signals"].get(
+                stock, {}
+            ).get("price")
+
+            if saved_price and float(saved_price) > 0:
+
+                exit_price = float(saved_price)
+
+        # Final fallback
+
+        if exit_price is None:
+
+            exit_price = float(pos["entry"])
+
+            print("WARNING: ENTRY PRICE FALLBACK:", stock)
+
+        close_position(
+            state,
+            stock,
+            exit_price,
+            "FORCE SQUARE OFF"
+        )
+
+    save_state(state)
+
+    print("\nALL POSITIONS CLOSED")
+
+
+# =========================
 # STOCK SCANNER
 # =========================
 
@@ -169,12 +329,9 @@ def scan_stock(stock, state):
         signal = "WAIT"
 
         if trend and rsi_ok:
-
             signal = "BUY"
 
-        # =====================
         # DASHBOARD DATA
-        # =====================
 
         state["signals"][stock] = {
 
@@ -194,13 +351,10 @@ def scan_stock(stock, state):
         print("PRICE:", price)
         print("EMA9:", round(ema9, 2))
         print("EMA20:", round(ema20, 2))
-        print("TREND:", trend)
         print("RSI:", round(rsi, 2))
         print("SIGNAL:", signal)
 
-        # =====================
         # EXIT CHECK
-        # =====================
 
         if stock in state["positions"]:
 
@@ -208,58 +362,38 @@ def scan_stock(stock, state):
 
             exit_price = None
 
+            reason = None
+
             if low <= pos["stop"]:
 
-                exit_price = pos["stop"]
+                exit_price = float(pos["stop"])
+                reason = "STOP LOSS"
 
             elif high >= pos["target"]:
 
-                exit_price = pos["target"]
+                exit_price = float(pos["target"])
+                reason = "TARGET"
 
             if exit_price is not None:
 
-                pnl = (
-                    exit_price - pos["entry"]
-                ) * pos["qty"]
-
-                state["cash"] += (
-                    exit_price * pos["qty"]
+                close_position(
+                    state,
+                    stock,
+                    exit_price,
+                    reason
                 )
-
-                state["history"].append({
-
-                    "Stock": stock,
-                    "Entry": pos["entry"],
-                    "Exit": exit_price,
-                    "Quantity": pos["qty"],
-                    "P&L": round(pnl, 2),
-                    "Time": datetime.now(IST).isoformat()
-
-                })
-
-                print("\n===== SELL EXECUTED =====")
-                print("STOCK:", stock)
-                print("EXIT:", exit_price)
-                print("P&L:", round(pnl, 2))
-
-                del state["positions"][stock]
 
             return
 
-        # =====================
         # BUY CHECK
-        # =====================
 
         if state["last_processed"].get(stock) == candle_time:
 
-            print("SAME CANDLE:", stock)
             return
 
         state["last_processed"][stock] = candle_time
 
         if signal != "BUY":
-
-            print("BUY CONDITION NOT MET")
             return
 
         if len(state["positions"]) >= MAX_TRADES:
@@ -267,17 +401,13 @@ def scan_stock(stock, state):
             print("MAX TRADES REACHED")
             return
 
-        # =====================
         # STOP LOSS
-        # =====================
 
         stop = float(
             df["Low"].iloc[-6:-1].min()
         )
 
         if stop <= 0 or stop >= price:
-
-            print("INVALID STOP LOSS")
             return
 
         risk_per_share = price - stop
@@ -291,41 +421,46 @@ def scan_stock(stock, state):
         )
 
         if qty <= 0:
-
-            print("QUANTITY ZERO")
             return
 
         cost = qty * price
 
-        if cost > state["cash"]:
+        buy_brokerage = calculate_brokerage(cost)
+
+        total_cost = cost + buy_brokerage
+
+        if total_cost > state["cash"]:
 
             print("INSUFFICIENT CASH")
             return
 
         target = price + (1.5 * risk_per_share)
 
-        # =====================
-        # EXECUTE PAPER BUY
-        # =====================
+        # EXECUTE BUY
 
-        state["cash"] -= cost
+        state["cash"] -= total_cost
 
         state["positions"][stock] = {
 
             "entry": price,
+
             "stop": stop,
+
             "target": target,
-            "qty": qty
+
+            "qty": qty,
+
+            "buy_brokerage": buy_brokerage
 
         }
 
         print("\n===== BUY EXECUTED =====")
+
         print("STOCK:", stock)
         print("ENTRY:", price)
-        print("STOP:", stop)
-        print("TARGET:", target)
         print("QUANTITY:", qty)
         print("INVESTMENT:", round(cost, 2))
+        print("BUY BROKERAGE:", buy_brokerage)
 
     except Exception as e:
 
@@ -340,64 +475,25 @@ def show_portfolio(state):
 
     print("\n===== PORTFOLIO =====")
 
-    print("CASH:", round(state["cash"], 2))
+    total_pnl = sum(
+        t["P&L"] for t in state["history"]
+    )
+
+    total_brokerage = sum(
+        t.get("Total Brokerage", 0)
+        for t in state["history"]
+    )
+
+    print("AVAILABLE CASH:", round(state["cash"], 2))
 
     print("OPEN TRADES:", len(state["positions"]))
 
     print("CLOSED TRADES:", len(state["history"]))
 
-    total_pnl = sum(
-        t["P&L"] for t in state["history"]
-    )
+    print("TOTAL BROKERAGE:", round(total_brokerage, 2))
 
-    print("TOTAL REALIZED P&L:", round(total_pnl, 2))
-# =========================
-# FORCE SQUARE OFF
-# =========================
+    print("NET REALIZED P&L:", round(total_pnl, 2))
 
-def square_off_all(state):
-
-    print("\n===== FORCE SQUARE OFF =====")
-
-    for stock in list(state["positions"].keys()):
-
-        pos = state["positions"][stock]
-
-        df = get_data(stock)
-
-        if df is None or df.empty:
-            print("PRICE NOT AVAILABLE:", stock)
-            continue
-
-        exit_price = float(df["Close"].iloc[-1])
-
-        pnl = (
-            exit_price - pos["entry"]
-        ) * pos["qty"]
-
-        state["cash"] += (
-            exit_price * pos["qty"]
-        )
-
-        state["history"].append({
-
-            "Stock": stock,
-            "Entry": pos["entry"],
-            "Exit": exit_price,
-            "Quantity": pos["qty"],
-            "P&L": round(pnl, 2),
-            "Time": datetime.now(IST).isoformat()
-
-        })
-
-        print("SQUARE OFF:", stock)
-        print("P&L:", round(pnl, 2))
-
-        del state["positions"][stock]
-
-    save_state(state)
-
-    print("ALL POSITIONS CLOSED")
 
 # =========================
 # MAIN ENGINE
@@ -409,45 +505,45 @@ def main():
 
     market_start = dt_time(9, 15)
     market_split = dt_time(15, 0)
-    market_end = dt_time(15, 30)
+
+    state = load_state()
 
     print("\nCURRENT TIME:", now)
+
+    # BEFORE MARKET
 
     if now.time() < market_start:
 
         print("MARKET NOT STARTED")
         return
 
-    if now.time() >= market_end:
+    # 3 PM OR LATER
 
-        print("MARKET CLOSED")
+    if now.time() >= market_split:
+
+        print("SQUARE OFF TIME REACHED")
+
+        square_off_all(state)
+
+        show_portfolio(state)
+
         return
 
-    if now.time() < market_split:
-
-        stop_time = market_split
-
-    else:
-
-        stop_time = market_end
+    # TRADING SESSION
 
     end_time = datetime.combine(
         now.date(),
-        stop_time,
+        market_split,
         tzinfo=IST
     )
 
-    state = load_state()
-
-    print("\n===== CONTINUOUS TRADING STARTED =====")
+    print("\n===== TRADING STARTED =====")
 
     while datetime.now(IST) < end_time:
 
-        print("\n-------------------------")
-
-        print("SCAN TIME:", datetime.now(IST))
-
         for stock in STOCKS:
+
+            # Check 3 PM before every stock
 
             if datetime.now(IST) >= end_time:
                 break
@@ -464,15 +560,19 @@ def main():
 
         if remaining > 0:
 
-            time.sleep(min(SCAN_INTERVAL, remaining))
+            time.sleep(
+                min(SCAN_INTERVAL, remaining)
+            )
 
-    save_state(state)
+    # FINAL SQUARE OFF
 
-    print("\n===== TRADING SESSION COMPLETED =====")
+    print("\n===== 3 PM SQUARE OFF =====")
+
+    square_off_all(state)
 
     show_portfolio(state)
 
-    print("BOT STOPPED:", datetime.now(IST))
+    print("\nTRADING SESSION COMPLETED")
 
 
 if __name__ == "__main__":
