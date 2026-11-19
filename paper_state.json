@@ -285,8 +285,9 @@
       "updated": "2026-11-19T14:59:29.442575+05:30"
     }
   },
-  "updated": "2026-11-20T03:32:42.657823+05:30",
+  "updated": "2026-11-20T05:14:33.342230+05:30",
   "capital": 10000.0,
   "bot_status": "WAITING FOR MARKET",
-  "square_off_status": "COMPLETED"
+  "square_off_status": "COMPLETED",
+  "data_health": {}
 }
