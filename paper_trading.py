@@ -351,7 +351,53 @@ def show_portfolio(state):
     )
 
     print("TOTAL REALIZED P&L:", round(total_pnl, 2))
+# =========================
+# FORCE SQUARE OFF
+# =========================
 
+def square_off_all(state):
+
+    print("\n===== FORCE SQUARE OFF =====")
+
+    for stock in list(state["positions"].keys()):
+
+        pos = state["positions"][stock]
+
+        df = get_data(stock)
+
+        if df is None or df.empty:
+            print("PRICE NOT AVAILABLE:", stock)
+            continue
+
+        exit_price = float(df["Close"].iloc[-1])
+
+        pnl = (
+            exit_price - pos["entry"]
+        ) * pos["qty"]
+
+        state["cash"] += (
+            exit_price * pos["qty"]
+        )
+
+        state["history"].append({
+
+            "Stock": stock,
+            "Entry": pos["entry"],
+            "Exit": exit_price,
+            "Quantity": pos["qty"],
+            "P&L": round(pnl, 2),
+            "Time": datetime.now(IST).isoformat()
+
+        })
+
+        print("SQUARE OFF:", stock)
+        print("P&L:", round(pnl, 2))
+
+        del state["positions"][stock]
+
+    save_state(state)
+
+    print("ALL POSITIONS CLOSED")
 
 # =========================
 # MAIN ENGINE
