@@ -2,10 +2,7 @@ name: Paper Trading Bot
 
 on:
   schedule:
-    # 9:15 AM IST
     - cron: '45 3 * * 1-5'
-
-    # 3:00 PM IST
     - cron: '30 9 * * 1-5'
 
   workflow_dispatch:
@@ -25,6 +22,9 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -36,6 +36,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install yfinance pandas
 
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
       - name: Run Bot and Publish Every Minute
         shell: bash
         run: |
@@ -43,29 +48,37 @@ jobs:
           BOT_PID=$!
 
           while kill -0 "$BOT_PID" 2>/dev/null; do
+
             sleep 60
 
-            git add paper_state.json
+            if [ -f paper_state.json ]; then
 
-            if ! git diff --cached --quiet; then
-              git commit -m "Live paper trading update"
-              git pull --rebase origin main
-              git push origin HEAD:main
+              git add paper_state.json
+
+              if ! git diff --cached --quiet; then
+                git commit -m "Live paper trading update"
+                git push origin HEAD:main
+              fi
+
             fi
+
           done
 
           wait "$BOT_PID"
 
       - name: Final Save
         if: always()
+        shell: bash
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -f paper_state.json ]; then
 
-          git add paper_state.json
+            git add paper_state.json
 
-          if ! git diff --cached --quiet; then
-            git commit -m "Final paper trading update"
-            git pull --rebase origin main
-            git push origin HEAD:main
+            if ! git diff --cached --quiet; then
+              git commit -m "Final paper trading update"
+              git push origin HEAD:main
+            fi
+
+          else
+            echo "paper_state.json not found"
           fi
