@@ -31,7 +31,6 @@ STOCKS = [
     "INFY.NS",
     "TMPV.NS",
     "TMCV.NS",
-
     "AXISBANK.NS",
     "KOTAKBANK.NS",
     "BAJFINANCE.NS",
@@ -60,6 +59,7 @@ def load_state():
         state.setdefault("positions", {})
         state.setdefault("history", [])
         state.setdefault("last_processed", {})
+        state.setdefault("signals", {})
 
         return state
 
@@ -67,7 +67,8 @@ def load_state():
         "cash": CAPITAL,
         "positions": {},
         "history": [],
-        "last_processed": {}
+        "last_processed": {},
+        "signals": {}
     }
 
 
@@ -104,17 +105,14 @@ def get_data(stock):
     df = df.sort_index()
 
     df["EMA20"] = df["Close"].ewm(span=20).mean()
-
     df["EMA50"] = df["Close"].ewm(span=50).mean()
 
     delta = df["Close"].diff()
 
     gain = delta.clip(lower=0)
-
     loss = -delta.clip(upper=0)
 
     avg_gain = gain.rolling(14).mean()
-
     avg_loss = loss.rolling(14).mean()
 
     rs = avg_gain / avg_loss.replace(0, float("nan"))
@@ -137,29 +135,79 @@ def scan_stock(stock, state):
         df = get_data(stock)
 
         if df is None or len(df) < 50:
+
             print("INSUFFICIENT DATA:", stock)
             return
 
         candle = df.iloc[-1]
-
         previous = df.iloc[-21:-1]
 
         candle_time = str(df.index[-1])
+
+        price = float(candle["Close"])
+
+        low = float(candle["Low"])
+        high = float(candle["High"])
+
+        breakout = (
+            price > float(previous["High"].max())
+        )
+
+        volume_spike = (
+            candle["Volume"] >
+            candle["AVG_VOLUME"] * 1.5
+        )
+
+        trend = (
+            candle["EMA20"] > candle["EMA50"]
+        )
+
+        rsi = float(candle["RSI"])
+
+        rsi_ok = 50 < rsi < 70
+
+        signal = "WAIT"
+
+        if (
+            breakout
+            and volume_spike
+            and trend
+            and rsi_ok
+        ):
+            signal = "BUY"
+
+        # =====================
+        # DASHBOARD SIGNAL DATA
+        # =====================
+
+        state["signals"][stock] = {
+
+            "price": round(price, 2),
+
+            "trend": bool(trend),
+
+            "rsi": round(rsi, 2),
+
+            "signal": signal,
+
+            "updated": datetime.now(IST).isoformat()
+
+        }
+
+        print("\nSTOCK:", stock)
+        print("PRICE:", price)
+        print("TREND:", trend)
+        print("RSI:", round(rsi, 2))
+        print("SIGNAL:", signal)
+
+        # =====================
+        # PREVENT DUPLICATE TRADE
+        # =====================
 
         if state["last_processed"].get(stock) == candle_time:
             return
 
         state["last_processed"][stock] = candle_time
-
-        price = float(candle["Close"])
-
-        low = float(candle["Low"])
-
-        high = float(candle["High"])
-
-        print("\nSTOCK:", stock)
-
-        print("PRICE:", price)
 
         # =====================
         # EXIT CHECK
@@ -192,21 +240,15 @@ def scan_stock(stock, state):
                 state["history"].append({
 
                     "Stock": stock,
-
                     "Entry": pos["entry"],
-
                     "Exit": exit_price,
-
                     "Quantity": pos["qty"],
-
                     "P&L": round(pnl, 2),
-
                     "Time": datetime.now(IST).isoformat()
 
                 })
 
                 print("SELL:", stock)
-
                 print("P&L:", round(pnl, 2))
 
                 del state["positions"][stock]
@@ -217,37 +259,7 @@ def scan_stock(stock, state):
         # BUY CONDITIONS
         # =====================
 
-        breakout = (
-            price > float(previous["High"].max())
-        )
-
-        volume_spike = (
-            candle["Volume"] >
-            candle["AVG_VOLUME"] * 1.5
-        )
-
-        trend = (
-            candle["EMA20"] > candle["EMA50"]
-        )
-
-        rsi_ok = (
-            50 < candle["RSI"] < 70
-        )
-
-        print("BREAKOUT:", breakout)
-
-        print("VOLUME SPIKE:", volume_spike)
-
-        print("TREND:", trend)
-
-        print("RSI:", round(float(candle["RSI"]), 2))
-
-        if (
-            breakout
-            and volume_spike
-            and trend
-            and rsi_ok
-        ):
+        if signal == "BUY":
 
             if len(state["positions"]) >= MAX_TRADES:
                 return
@@ -284,25 +296,17 @@ def scan_stock(stock, state):
             state["positions"][stock] = {
 
                 "entry": price,
-
                 "stop": stop,
-
                 "target": target,
-
                 "qty": qty
 
             }
 
             print("\n===== BUY SIGNAL =====")
-
             print("STOCK:", stock)
-
             print("ENTRY:", price)
-
             print("STOP LOSS:", stop)
-
             print("TARGET:", target)
-
             print("QUANTITY:", qty)
 
     except Exception as e:
@@ -340,31 +344,20 @@ def main():
     now = datetime.now(IST)
 
     market_start = dt_time(9, 15)
-
     market_split = dt_time(15, 0)
-
     market_end = dt_time(15, 30)
 
     print("\nCURRENT TIME:", now)
 
-    # Before market
-
     if now.time() < market_start:
 
         print("MARKET NOT STARTED")
-
         return
-
-    # After market
 
     if now.time() >= market_end:
 
         print("MARKET CLOSED")
-
         return
-
-    # First session ends at 3 PM.
-    # Second session ends at 3:30 PM.
 
     if now.time() < market_split:
 
@@ -375,13 +368,9 @@ def main():
         stop_time = market_end
 
     end_time = datetime.combine(
-
         now.date(),
-
         stop_time,
-
         tzinfo=IST
-
     )
 
     state = load_state()
@@ -389,7 +378,6 @@ def main():
     print("\n===== CONTINUOUS TRADING STARTED =====")
 
     print("START:", now)
-
     print("STOP:", end_time)
 
     # =====================
@@ -409,14 +397,15 @@ def main():
 
             scan_stock(stock, state)
 
-        save_state(state)
+            # Save after every stock so dashboard
+            # can see the latest available data.
+
+            save_state(state)
 
         show_portfolio(state)
 
         remaining = (
-
             end_time - datetime.now(IST)
-
         ).total_seconds()
 
         if remaining > 0:
