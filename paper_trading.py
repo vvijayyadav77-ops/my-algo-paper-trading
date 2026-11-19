@@ -78,8 +78,14 @@ def load_state():
 
 def save_state(state):
 
-    with open(FILE, "w") as f:
+    state["updated"] = datetime.now(IST).isoformat()
+
+    temp_file = FILE + ".tmp"
+
+    with open(temp_file, "w") as f:
         json.dump(state, f, indent=4)
+
+    os.replace(temp_file, FILE)
 
 
 # =========================
