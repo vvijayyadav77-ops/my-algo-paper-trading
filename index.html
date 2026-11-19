@@ -1,329 +1,261 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Algo Trading Dashboard</title><style>
+<title>My Algo Trading Dashboard V5</title>
+<style>
+* { box-sizing: border-box; }
 body {
-    margin: 0;
-    padding: 15px;
-    background: #101827;
-    color: white;
-    font-family: Arial;
+    margin: 0; padding: 15px; background: #101827; color: white;
+    font-family: Arial, sans-serif;
 }
-
-h1 {
-    color: #00e5a0;
-    text-align: center;
-}
-
+h1 { color: #00e5a0; text-align: center; margin-bottom: 6px; }
+.status { text-align: center; color: #00e5a0; font-size: 14px; }
 .container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
 }
-
 .card, .section {
-    background: #1d293b;
-    padding: 18px;
-    border-radius: 12px;
+    background: #1d293b; padding: 16px; border-radius: 12px;
 }
-
-.label {
-    color: #aab5c5;
-    font-size: 13px;
-}
-
-.value {
-    font-size: 23px;
-    font-weight: bold;
-    margin-top: 10px;
-}
-
+.label { color: #aab5c5; font-size: 12px; }
+.value { font-size: 21px; font-weight: bold; margin-top: 9px; overflow-wrap: anywhere; }
 .green { color: #00e5a0; }
 .red { color: #ff5252; }
 .yellow { color: #ffd54f; }
-
-.section {
-    margin-top: 18px;
-    overflow-x: auto;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 550px;
-}
-
+.section { margin-top: 17px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 720px; }
 td, th {
-    padding: 12px;
-    border-bottom: 1px solid #39465a;
-    text-align: left;
+    padding: 11px; border-bottom: 1px solid #39465a;
+    text-align: left; white-space: nowrap; font-size: 13px;
 }
-
-th {
-    color: #00e5a0;
-}
-
+th { color: #00e5a0; }
 button {
-    background: #00c896;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 7px;
-    font-weight: bold;
+    background: #00c896; color: #061b16; border: none; padding: 11px 18px;
+    border-radius: 7px; font-weight: bold; cursor: pointer;
 }
-
-.status {
-    color: #00e5a0;
-    text-align: center;
-}
-
-.buy {
-    color: #00e5a0;
-    font-weight: bold;
-}
-
-.wait {
-    color: #ffd54f;
-    font-weight: bold;
-}
-
-.no-data {
-    color: #ff5252;
-}
-
+.buy { color: #00e5a0; font-weight: bold; }
+.sell { color: #ff7777; font-weight: bold; }
+.wait { color: #ffd54f; font-weight: bold; }
+.muted { color: #aab5c5; }
+.small { color: #aab5c5; font-size: 12px; line-height: 1.5; }
 @media(max-width: 500px) {
-    .value {
-        font-size: 19px;
-    }
+    .value { font-size: 18px; }
+    body { padding: 10px; }
+    .card { padding: 13px; }
 }
-</style></head><body><h1>🚀 ALGO TRADING</h1><p class="status" id="status">Loading Dashboard...</p><div class="container"><div class="card">
-<div class="label">Starting Capital</div>
-<div class="value">₹10,000</div>
-</div><div class="card">
-<div class="label">Available Cash</div>
-<div class="value green" id="cash">₹0</div>
-</div><div class="card">
-<div class="label">Open Trades</div>
-<div class="value" id="open">0</div>
-</div><div class="card">
-<div class="label">Closed Trades</div>
-<div class="value" id="closed">0</div>
-</div><div class="card">
-<div class="label">Realized P&L</div>
-<div class="value" id="pnl">₹0</div>
-</div><div class="card">
-<div class="label">Win Rate</div>
-<div class="value" id="winrate">0%</div>
-</div></div><div class="section"><h3>📡 LIVE STOCK SIGNALS (16 STOCKS)</h3><table>
-<thead>
-<tr>
-<th>Stock</th>
-<th>Price</th>
-<th>Trend</th>
-<th>RSI</th>
-<th>Signal</th>
-</tr>
-</thead><tbody id="signals">
-<tr>
-<td colspan="5">Waiting for Python data...</td>
-</tr>
-</tbody>
-</table></div><div class="section"><h3>🟢 OPEN POSITIONS</h3><table>
-<thead>
-<tr>
-<th>Stock</th>
-<th>Entry</th>
-<th>Quantity</th>
-<th>Stop Loss</th>
-<th>Target</th>
-</tr>
-</thead><tbody id="positions"></tbody>
-</table></div><div class="section"><h3>📊 TRADE HISTORY</h3><table>
-<thead>
-<tr>
-<th>Stock</th>
-<th>Entry</th>
-<th>Exit</th>
-<th>P&L</th>
-</tr>
-</thead><tbody id="history"></tbody>
-</table></div><div class="section"><h3>⚙️ Dashboard Control</h3><button onclick="loadData()">Refresh Data</button>
+</style>
+</head>
+<body>
+<h1>🚀 ALGO TRADING V5</h1>
+<p class="status" id="status">Loading dashboard...</p>
 
-<p id="updated">Last Update: --</p></div><script>
+<div class="container">
+    <div class="card"><div class="label">Starting Capital</div><div class="value">₹10,000.00</div></div>
+    <div class="card"><div class="label">Available Cash</div><div class="value green" id="cash">₹0.00</div></div>
+    <div class="card"><div class="label">Invested Amount</div><div class="value" id="invested">₹0.00</div></div>
+    <div class="card"><div class="label">Market Value</div><div class="value" id="marketValue">₹0.00</div></div>
+    <div class="card"><div class="label">Open Trades</div><div class="value" id="open">0</div></div>
+    <div class="card"><div class="label">Closed Trades</div><div class="value" id="closed">0</div></div>
+    <div class="card"><div class="label">Realized Net P&L</div><div class="value" id="realized">₹0.00</div></div>
+    <div class="card"><div class="label">Unrealized Net P&L</div><div class="value" id="unrealized">₹0.00</div></div>
+    <div class="card"><div class="label">Total Net P&L</div><div class="value" id="totalPnl">₹0.00</div></div>
+    <div class="card"><div class="label">Win Rate</div><div class="value" id="winrate">0.0%</div></div>
+    <div class="card"><div class="label">Brokerage Paid (Closed)</div><div class="value" id="brokeragePaid">₹0.00</div></div>
+    <div class="card"><div class="label">Open Trade Estimated Charges</div><div class="value" id="openCharges">₹0.00</div></div>
+    <div class="card"><div class="label">Estimated Equity</div><div class="value" id="equity">₹10,000.00</div></div>
+    <div class="card"><div class="label">Square Off Status</div><div class="value yellow" id="squareoff">--</div></div>
+</div>
 
+<div class="section">
+<h3>📡 STOCK SIGNALS</h3>
+<table>
+<thead><tr>
+<th>Stock</th><th>Price</th><th>Trend</th><th>EMA 9</th><th>EMA 21</th>
+<th>VWAP</th><th>RSI</th><th>Vol Ratio</th><th>Signal</th>
+</tr></thead>
+<tbody id="signals"><tr><td colspan="9">Waiting for Python data...</td></tr></tbody>
+</table>
+</div>
+
+<div class="section">
+<h3>🟢 OPEN POSITIONS</h3>
+<table>
+<thead><tr>
+<th>Stock</th><th>Entry</th><th>Live Price</th><th>Quantity</th>
+<th>Invested</th><th>Buy Brokerage</th><th>Stop Loss</th><th>Target</th><th>Unrealized Net P&L</th>
+</tr></thead>
+<tbody id="positions"><tr><td colspan="9">No open trades</td></tr></tbody>
+</table>
+</div>
+
+<div class="section">
+<h3>📊 TRADE HISTORY</h3>
+<table>
+<thead><tr>
+<th>Time</th><th>Stock</th><th>Entry</th><th>Exit</th><th>Quantity</th>
+<th>Buy Brokerage</th><th>Sell Brokerage</th><th>Total Brokerage</th>
+<th>Gross P&L</th><th>Net P&L</th><th>Exit Reason</th>
+</tr></thead>
+<tbody id="history"><tr><td colspan="11">No closed trades</td></tr></tbody>
+</table>
+</div>
+
+<div class="section">
+<h3>⚙️ Dashboard Control</h3>
+<button onclick="loadData()">Refresh Data</button>
+<p id="updated" class="small">Last update: --</p>
+<p class="small">
+Paper trading only. Yahoo Finance 1-minute data may be delayed or incomplete.
+Brokerage shown is an estimate using the bot's configured rate/cap; statutory
+taxes, exchange charges, GST, STT, stamp duty and slippage are not included.
+</p>
+</div>
+
+<script>
 const stocks = [
-"RELIANCE.NS",
-"HDFCBANK.NS",
-"ICICIBANK.NS",
-"SBIN.NS",
-"TCS.NS",
-"INFY.NS",
-"TMPV.NS",
-"TMCV.NS",
-"AXISBANK.NS",
-"KOTAKBANK.NS",
-"BAJFINANCE.NS",
-"LT.NS",
-"BHARTIARTL.NS",
-"ITC.NS",
-"SUNPHARMA.NS",
-"HINDUNILVR.NS"
+"RELIANCE.NS","HDFCBANK.NS","ICICIBANK.NS","SBIN.NS","TCS.NS","INFY.NS",
+"TMPV.NS","TMCV.NS","AXISBANK.NS","KOTAKBANK.NS","BAJFINANCE.NS","LT.NS",
+"BHARTIARTL.NS","ITC.NS","SUNPHARMA.NS","HINDUNILVR.NS"
 ];
 
+const fmt = value => "₹" + Number(value || 0).toLocaleString("en-IN", {
+    minimumFractionDigits: 2, maximumFractionDigits: 2
+});
+const pnlClass = value => Number(value) >= 0 ? "green" : "red";
+const safe = value => String(value ?? "").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[ch]));
+
 async function loadData() {
+    try {
+        const response = await fetch("paper_state.json?t=" + Date.now(), {
+            cache: "no-store"
+        });
+        if (!response.ok) throw new Error("paper_state.json not found (HTTP " + response.status + ")");
+        const data = await response.json();
 
-try {
+        const positions = data.positions || {};
+        const history = data.history || [];
+        const signals = data.signals || {};
 
-const response = await fetch(
-"paper_state.json?t=" + Date.now(),
-{ cache: "no-store" }
-);
+        const realized = history.reduce((sum, trade) => sum + Number(trade["P&L"] || 0), 0);
+        const closedBrokerage = history.reduce((sum, trade) => sum + Number(trade["Total Brokerage"] || 0), 0);
+        const wins = history.filter(trade => Number(trade["P&L"] || 0) > 0).length;
+        const winrate = history.length ? wins / history.length * 100 : 0;
 
-if (!response.ok) {
-throw new Error("Data not found");
-}
+        let invested = 0, marketValue = 0, unrealizedGross = 0;
+        let openBuyBrokerage = 0, estimatedSellBrokerage = 0;
+        let posHTML = "";
 
-const data = await response.json();
+        for (const [stock, pos] of Object.entries(positions)) {
+            const qty = Number(pos.qty || 0);
+            const entry = Number(pos.entry || 0);
+            const live = Number((signals[stock] || {}).price || entry);
+            const buyFee = Number(pos.buy_brokerage || 0);
+            const cost = entry * qty;
+            const currentValue = live * qty;
+            const estimatedSellFee = Math.min(10, currentValue * 0.0005);
+            const openNet = (live - entry) * qty - buyFee - estimatedSellFee;
 
-document.getElementById("cash").innerText =
-"₹" + Number(data.cash).toFixed(2);
+            invested += cost;
+            marketValue += currentValue;
+            unrealizedGross += (live - entry) * qty;
+            openBuyBrokerage += buyFee;
+            estimatedSellBrokerage += estimatedSellFee;
 
-const positions = data.positions || {};
-const history = data.history || [];
+            posHTML += `<tr>
+                <td>${safe(stock)}</td><td>${fmt(entry)}</td><td>${fmt(live)}</td>
+                <td>${qty}</td><td>${fmt(cost)}</td><td>${fmt(buyFee)}</td>
+                <td>${fmt(pos.stop)}</td><td>${fmt(pos.target)}</td>
+                <td class="${pnlClass(openNet)}">${fmt(openNet)}</td>
+            </tr>`;
+        }
 
-document.getElementById("open").innerText =
-Object.keys(positions).length;
+        const openCharges = openBuyBrokerage + estimatedSellBrokerage;
+        const unrealizedNet = unrealizedGross - openCharges;
+        const totalNet = realized + unrealizedNet;
+        const cash = Number(data.cash || 0);
+        const equity = cash + marketValue;
 
-document.getElementById("closed").innerText =
-history.length;
+        document.getElementById("cash").innerText = fmt(cash);
+        document.getElementById("invested").innerText = fmt(invested);
+        document.getElementById("marketValue").innerText = fmt(marketValue);
+        document.getElementById("open").innerText = Object.keys(positions).length;
+        document.getElementById("closed").innerText = history.length;
 
-const pnl = history.reduce(
-(sum, trade) => sum + Number(trade["P&L"] || 0), 0
-);
+        const realizedEl = document.getElementById("realized");
+        realizedEl.innerText = fmt(realized);
+        realizedEl.className = "value " + pnlClass(realized);
 
-const pnlElement = document.getElementById("pnl");
+        const unrealizedEl = document.getElementById("unrealized");
+        unrealizedEl.innerText = fmt(unrealizedNet);
+        unrealizedEl.className = "value " + pnlClass(unrealizedNet);
 
-pnlElement.innerText = "₹" + pnl.toFixed(2);
+        const totalEl = document.getElementById("totalPnl");
+        totalEl.innerText = fmt(totalNet);
+        totalEl.className = "value " + pnlClass(totalNet);
 
-pnlElement.className =
-"value " + (pnl >= 0 ? "green" : "red");
+        document.getElementById("winrate").innerText = winrate.toFixed(1) + "%";
+        document.getElementById("brokeragePaid").innerText = fmt(closedBrokerage);
+        document.getElementById("openCharges").innerText = fmt(openCharges);
+        document.getElementById("equity").innerText = fmt(equity);
+        document.getElementById("squareoff").innerText = safe(data.square_off_status || "--");
 
-const wins = history.filter(
-trade => Number(trade["P&L"]) > 0
-).length;
+        let signalHTML = "";
+        for (const stock of stocks) {
+            const s = signals[stock];
+            if (!s) {
+                signalHTML += `<tr><td>${safe(stock)}</td><td colspan="8" class="muted">NO DATA</td></tr>`;
+                continue;
+            }
+            const cls = s.signal === "BUY" ? "buy" : (s.signal === "SELL" ? "sell" : "wait");
+            signalHTML += `<tr>
+                <td>${safe(stock)}</td><td>${fmt(s.price)}</td>
+                <td>${s.trend ? "UP" : "DOWN"}</td>
+                <td>${fmt(s.ema9)}</td><td>${fmt(s.ema21)}</td><td>${fmt(s.vwap)}</td>
+                <td>${Number(s.rsi || 0).toFixed(2)}</td>
+                <td>${Number(s.volume_ratio || 0).toFixed(2)}x</td>
+                <td class="${cls}">${safe(s.signal || "WAIT")}</td>
+            </tr>`;
+        }
+        document.getElementById("signals").innerHTML = signalHTML;
 
-const winrate = history.length
-? wins / history.length * 100
-: 0;
+        document.getElementById("positions").innerHTML =
+            posHTML || "<tr><td colspan='9'>No open trades</td></tr>";
 
-document.getElementById("winrate").innerText =
-winrate.toFixed(1) + "%";
+        let historyHTML = "";
+        history.slice().reverse().forEach(trade => {
+            const net = Number(trade["P&L"] || 0);
+            historyHTML += `<tr>
+                <td>${safe(trade.Time || "--")}</td><td>${safe(trade.Stock)}</td>
+                <td>${fmt(trade.Entry)}</td><td>${fmt(trade.Exit)}</td>
+                <td>${Number(trade.Quantity || 0)}</td>
+                <td>${fmt(trade["Buy Brokerage"])}</td>
+                <td>${fmt(trade["Sell Brokerage"])}</td>
+                <td>${fmt(trade["Total Brokerage"])}</td>
+                <td class="${pnlClass(trade["Gross P&L"])}">${fmt(trade["Gross P&L"])}</td>
+                <td class="${pnlClass(net)}">${fmt(net)}</td>
+                <td>${safe(trade["Exit Reason"] || "--")}</td>
+            </tr>`;
+        });
+        document.getElementById("history").innerHTML =
+            historyHTML || "<tr><td colspan='11'>No closed trades</td></tr>";
 
-const signals = data.signals || {};
+        document.getElementById("status").innerText =
+            "● " + safe(data.bot_status || "Dashboard Connected");
+        document.getElementById("updated").innerText =
+            "Data updated: " + (data.updated || "Not available") +
+            " | Browser refresh: " + new Date().toLocaleTimeString();
 
-let signalHTML = "";
-
-stocks.forEach(stock => {
-
-const s = signals[stock];
-
-if (!s) {
-
-signalHTML += `
-<tr>
-<td>${stock}</td>
-<td>--</td>
-<td>--</td>
-<td>--</td>
-<td class="no-data">NO DATA</td>
-</tr>
-`;
-
-return;
-
-}
-
-let signalClass = "wait";
-
-if (s.signal === "BUY") {
-signalClass = "buy";
-}
-
-signalHTML += `
-<tr>
-<td>${stock}</td>
-<td>₹${Number(s.price).toFixed(2)}</td>
-<td>${s.trend ? "UP" : "DOWN"}</td>
-<td>${Number(s.rsi).toFixed(2)}</td>
-<td class="${signalClass}">${s.signal}</td>
-</tr>
-`;
-
-});
-
-document.getElementById("signals").innerHTML =
-signalHTML;
-
-let posHTML = "";
-
-for (const [stock, pos] of Object.entries(positions)) {
-
-posHTML += `
-<tr>
-<td>${stock}</td>
-<td>₹${Number(pos.entry).toFixed(2)}</td>
-<td>${pos.qty}</td>
-<td>₹${Number(pos.stop).toFixed(2)}</td>
-<td>₹${Number(pos.target).toFixed(2)}</td>
-</tr>
-`;
-
-}
-
-document.getElementById("positions").innerHTML =
-posHTML || "<tr><td colspan='5'>No Open Trades</td></tr>";
-
-let historyHTML = "";
-
-history.slice().reverse().forEach(trade => {
-
-const profit = Number(trade["P&L"] || 0);
-
-historyHTML += `
-<tr>
-<td>${trade.Stock}</td>
-<td>₹${Number(trade.Entry).toFixed(2)}</td>
-<td>₹${Number(trade.Exit).toFixed(2)}</td>
-<td class="${profit >= 0 ? "green" : "red"}">
-₹${profit.toFixed(2)}
-</td>
-</tr>
-`;
-
-});
-
-document.getElementById("history").innerHTML =
-historyHTML || "<tr><td colspan='4'>No Closed Trades</td></tr>";
-
-document.getElementById("status").innerText =
-"● Dashboard Connected";
-
-document.getElementById("updated").innerText =
-"Last Update: " + new Date().toLocaleString();
-
-} catch(error) {
-
-document.getElementById("status").innerText =
-"Dashboard Error: " + error.message;
-
-}
-
+    } catch (error) {
+        document.getElementById("status").innerText = "Dashboard Error: " + error.message;
+    }
 }
 
 loadData();
-
-// AUTO REFRESH EVERY 60 SECONDS
-
-setInterval(loadData, 60000);
-
-</script></body>
+setInterval(loadData, 30000);
+</script>
+</body>
 </html>
