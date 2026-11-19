@@ -38,7 +38,7 @@ jobs:
 
       - name: Run Continuous Algo
         run: |
-          python paper_trading.py
+          python -u paper_trading.py
 
       - name: Save Trading Data
         if: always()
