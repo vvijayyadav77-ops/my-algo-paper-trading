@@ -33,136 +33,136 @@
         }
     ],
     "last_processed": {
-        "RELIANCE.NS": "2026-11-19 13:50:00+05:30",
+        "RELIANCE.NS": "2026-11-19 13:51:00+05:30",
         "HDFCBANK.NS": "2026-11-19 13:35:00+05:30",
-        "ICICIBANK.NS": "2026-11-19 13:50:00+05:30",
-        "SBIN.NS": "2026-11-19 13:50:00+05:30",
-        "TCS.NS": "2026-11-19 13:50:00+05:30",
-        "INFY.NS": "2026-11-19 13:50:00+05:30",
+        "ICICIBANK.NS": "2026-11-19 13:51:00+05:30",
+        "SBIN.NS": "2026-11-19 13:51:00+05:30",
+        "TCS.NS": "2026-11-19 13:51:00+05:30",
+        "INFY.NS": "2026-11-19 13:51:00+05:30",
         "TMPV.NS": "2026-11-19 13:38:00+05:30",
-        "TMCV.NS": "2026-11-19 13:50:00+05:30",
-        "AXISBANK.NS": "2026-11-19 13:50:00+05:30",
-        "KOTAKBANK.NS": "2026-11-19 13:50:00+05:30",
-        "BAJFINANCE.NS": "2026-11-19 13:50:00+05:30",
-        "LT.NS": "2026-11-19 13:50:00+05:30",
-        "BHARTIARTL.NS": "2026-11-19 13:50:00+05:30",
-        "ITC.NS": "2026-11-19 13:50:00+05:30",
-        "SUNPHARMA.NS": "2026-11-19 13:50:00+05:30",
-        "HINDUNILVR.NS": "2026-11-19 13:50:00+05:30"
+        "TMCV.NS": "2026-11-19 13:51:00+05:30",
+        "AXISBANK.NS": "2026-11-19 13:51:00+05:30",
+        "KOTAKBANK.NS": "2026-11-19 13:51:00+05:30",
+        "BAJFINANCE.NS": "2026-11-19 13:51:00+05:30",
+        "LT.NS": "2026-11-19 13:51:00+05:30",
+        "BHARTIARTL.NS": "2026-11-19 13:51:00+05:30",
+        "ITC.NS": "2026-11-19 13:51:00+05:30",
+        "SUNPHARMA.NS": "2026-11-19 13:51:00+05:30",
+        "HINDUNILVR.NS": "2026-11-19 13:51:00+05:30"
     },
     "signals": {
         "RELIANCE.NS": {
-            "price": 1365.7,
-            "trend": false,
-            "rsi": 50.0,
-            "signal": "WAIT",
-            "updated": "2026-11-19T13:50:12.109578+05:30"
-        },
-        "HDFCBANK.NS": {
-            "price": 817.3,
-            "trend": true,
-            "rsi": 51.06,
-            "signal": "BUY",
-            "updated": "2026-11-19T13:50:12.188703+05:30"
-        },
-        "ICICIBANK.NS": {
-            "price": 1600.1,
-            "trend": true,
-            "rsi": 71.95,
-            "signal": "BUY",
-            "updated": "2026-11-19T13:50:12.284017+05:30"
-        },
-        "SBIN.NS": {
-            "price": 1153.85,
-            "trend": true,
-            "rsi": 88.69,
-            "signal": "WAIT",
-            "updated": "2026-11-19T13:50:12.384751+05:30"
-        },
-        "TCS.NS": {
-            "price": 2336.9,
-            "trend": true,
-            "rsi": 64.38,
-            "signal": "BUY",
-            "updated": "2026-11-19T13:50:12.475910+05:30"
-        },
-        "INFY.NS": {
-            "price": 1079.3,
-            "trend": true,
-            "rsi": 72.6,
-            "signal": "BUY",
-            "updated": "2026-11-19T13:50:12.747293+05:30"
-        },
-        "TMPV.NS": {
-            "price": 262.4,
-            "trend": true,
-            "rsi": 53.33,
-            "signal": "BUY",
-            "updated": "2026-11-19T13:50:12.848500+05:30"
-        },
-        "TMCV.NS": {
-            "price": 444.15,
+            "price": 1365.5,
             "trend": false,
             "rsi": 47.83,
             "signal": "WAIT",
-            "updated": "2026-11-19T13:50:12.939139+05:30"
+            "updated": "2026-11-19T13:51:15.390454+05:30"
+        },
+        "HDFCBANK.NS": {
+            "price": 817.25,
+            "trend": true,
+            "rsi": 47.92,
+            "signal": "BUY",
+            "updated": "2026-11-19T13:51:15.474376+05:30"
+        },
+        "ICICIBANK.NS": {
+            "price": 1600.2,
+            "trend": true,
+            "rsi": 68.35,
+            "signal": "BUY",
+            "updated": "2026-11-19T13:51:15.578911+05:30"
+        },
+        "SBIN.NS": {
+            "price": 1153.6,
+            "trend": true,
+            "rsi": 84.53,
+            "signal": "WAIT",
+            "updated": "2026-11-19T13:51:15.669402+05:30"
+        },
+        "TCS.NS": {
+            "price": 2334.3,
+            "trend": true,
+            "rsi": 46.21,
+            "signal": "BUY",
+            "updated": "2026-11-19T13:51:15.758126+05:30"
+        },
+        "INFY.NS": {
+            "price": 1076.7,
+            "trend": true,
+            "rsi": 44.58,
+            "signal": "WAIT",
+            "updated": "2026-11-19T13:51:15.840605+05:30"
+        },
+        "TMPV.NS": {
+            "price": 262.35,
+            "trend": true,
+            "rsi": 43.75,
+            "signal": "WAIT",
+            "updated": "2026-11-19T13:51:15.923643+05:30"
+        },
+        "TMCV.NS": {
+            "price": 443.25,
+            "trend": false,
+            "rsi": 33.33,
+            "signal": "WAIT",
+            "updated": "2026-11-19T13:51:16.017083+05:30"
         },
         "AXISBANK.NS": {
-            "price": 1375.8,
+            "price": 1375.7,
             "trend": true,
-            "rsi": 64.38,
+            "rsi": 57.33,
             "signal": "BUY",
-            "updated": "2026-11-19T13:50:13.034508+05:30"
+            "updated": "2026-11-19T13:51:16.113958+05:30"
         },
         "KOTAKBANK.NS": {
-            "price": 500.75,
+            "price": 500.6,
             "trend": true,
-            "rsi": 64.71,
+            "rsi": 61.11,
             "signal": "BUY",
-            "updated": "2026-11-19T13:50:13.153512+05:30"
+            "updated": "2026-11-19T13:51:16.209942+05:30"
         },
         "BAJFINANCE.NS": {
-            "price": 1095.25,
+            "price": 1095.35,
             "trend": false,
-            "rsi": 35.71,
+            "rsi": 39.68,
             "signal": "WAIT",
-            "updated": "2026-11-19T13:50:13.282001+05:30"
+            "updated": "2026-11-19T13:51:16.292377+05:30"
         },
         "LT.NS": {
-            "price": 4178.3,
+            "price": 4177.6,
             "trend": true,
-            "rsi": 57.45,
+            "rsi": 48.33,
             "signal": "BUY",
-            "updated": "2026-11-19T13:50:13.375836+05:30"
+            "updated": "2026-11-19T13:51:16.387769+05:30"
         },
         "BHARTIARTL.NS": {
-            "price": 2145.8,
+            "price": 2145.5,
             "trend": true,
-            "rsi": 72.58,
+            "rsi": 68.96,
             "signal": "BUY",
-            "updated": "2026-11-19T13:50:13.508243+05:30"
+            "updated": "2026-11-19T13:51:16.482307+05:30"
         },
         "ITC.NS": {
-            "price": 299.85,
-            "trend": true,
-            "rsi": 60.0,
-            "signal": "BUY",
-            "updated": "2026-11-19T13:50:13.614096+05:30"
+            "price": 299.4,
+            "trend": false,
+            "rsi": 41.38,
+            "signal": "WAIT",
+            "updated": "2026-11-19T13:51:16.558226+05:30"
         },
         "SUNPHARMA.NS": {
-            "price": 1908.7,
+            "price": 1907.3,
             "trend": false,
-            "rsi": 21.67,
+            "rsi": 10.3,
             "signal": "WAIT",
-            "updated": "2026-11-19T13:50:13.700989+05:30"
+            "updated": "2026-11-19T13:51:16.639635+05:30"
         },
         "HINDUNILVR.NS": {
-            "price": 2061.2,
+            "price": 2061.0,
             "trend": true,
-            "rsi": 51.19,
-            "signal": "BUY",
-            "updated": "2026-11-19T13:50:13.806570+05:30"
+            "rsi": 31.75,
+            "signal": "WAIT",
+            "updated": "2026-11-19T13:51:16.735265+05:30"
         }
     },
-    "updated": "2026-11-19T13:50:13.806637+05:30"
+    "updated": "2026-11-19T13:51:16.735308+05:30"
 }
