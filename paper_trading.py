@@ -7,34 +7,41 @@ import time
 from datetime import datetime, time as dt_time
 from zoneinfo import ZoneInfo
 
-print("PAPER TRADING BOT V5 STARTED")
+print("PAPER TRADING BOT V6 STARTED")
 
 # =========================================================
 # SETTINGS
 # =========================================================
+
 CAPITAL = 10000.0
 RISK_PER_TRADE = 50.0
 MAX_TRADES = 2
 TRADE_AMOUNT = 2000.0
+
 SCAN_INTERVAL = 30
 
-# Estimate only: 0.05% per order, capped at Rs 10 per order.
-# This is NOT a complete Kotak Neo/Groww charge schedule.
 BROKERAGE_RATE = 0.0005
 MAX_BROKERAGE = 10.0
 
 VOLUME_MULTIPLIER = 1.5
 REWARD_RISK = 1.5
+
+MAX_DATA_AGE = 180
+
 IST = ZoneInfo("Asia/Kolkata")
 
 MARKET_START = dt_time(9, 15)
 SQUARE_OFF_TIME = dt_time(15, 0)
 
 STOCKS = [
-    "RELIANCE.NS", "HDFCBANK.NS", "ICICIBANK.NS", "SBIN.NS",
-    "TCS.NS", "INFY.NS", "TMPV.NS", "TMCV.NS",
-    "AXISBANK.NS", "KOTAKBANK.NS", "BAJFINANCE.NS", "LT.NS",
-    "BHARTIARTL.NS", "ITC.NS", "SUNPHARMA.NS", "HINDUNILVR.NS"
+    "RELIANCE.NS", "HDFCBANK.NS",
+    "ICICIBANK.NS", "SBIN.NS",
+    "TCS.NS", "INFY.NS",
+    "TMPV.NS", "TMCV.NS",
+    "AXISBANK.NS", "KOTAKBANK.NS",
+    "BAJFINANCE.NS", "LT.NS",
+    "BHARTIARTL.NS", "ITC.NS",
+    "SUNPHARMA.NS", "HINDUNILVR.NS"
 ]
 
 FILE = "paper_state.json"
@@ -43,6 +50,7 @@ FILE = "paper_state.json"
 # =========================================================
 # HELPERS
 # =========================================================
+
 def now_ist():
     return datetime.now(IST)
 
@@ -64,38 +72,59 @@ def empty_state():
         "history": [],
         "last_processed": {},
         "signals": {},
+        "data_health": {},
         "updated": None,
         "bot_status": "INITIALIZED",
         "square_off_status": "NOT DUE"
     }
 
 
+# =========================================================
+# STATE MANAGEMENT
+# =========================================================
+
 def load_state():
+
     if not os.path.exists(FILE):
         return empty_state()
 
     try:
         with open(FILE, "r", encoding="utf-8") as f:
             state = json.load(f)
-    except (json.JSONDecodeError, OSError):
-        print("WARNING: Could not read state file. Starting a fresh state.")
-        return empty_state()
 
-    # Keep existing user's capital, positions and history.
-    state.setdefault("capital", CAPITAL)
-    state.setdefault("cash", CAPITAL)
-    state.setdefault("positions", {})
-    state.setdefault("history", [])
-    state.setdefault("last_processed", {})
-    state.setdefault("signals", {})
-    state.setdefault("bot_status", "RUNNING")
-    state.setdefault("square_off_status", "NOT DUE")
+        if not isinstance(state, dict):
+            raise ValueError("Invalid state format")
 
-    return state
+        required = [
+            "capital",
+            "cash",
+            "positions",
+            "history"
+        ]
+
+        if not all(key in state for key in required):
+            raise ValueError("Incomplete state file")
+
+        state.setdefault("last_processed", {})
+        state.setdefault("signals", {})
+        state.setdefault("data_health", {})
+        state.setdefault("bot_status", "RUNNING")
+        state.setdefault("square_off_status", "NOT DUE")
+
+        return state
+
+    except Exception as exc:
+
+        # Never overwrite an unreadable portfolio state.
+        raise RuntimeError(
+            "STATE FILE ERROR. TRADING HALTED: " + str(exc)
+        )
 
 
 def save_state(state):
+
     state["updated"] = now_ist().isoformat()
+
     temp_file = FILE + ".tmp"
 
     with open(temp_file, "w", encoding="utf-8") as f:
@@ -105,241 +134,437 @@ def save_state(state):
 
 
 # =========================================================
-# MARKET DATA + INDICATORS
+# SMART DATA MANAGEMENT
 # =========================================================
+
+def update_data_health(state, stock, status, message,
+                       candle_time=None, age=None):
+
+    state["data_health"][stock] = {
+
+        "source": "Yahoo Finance",
+        "status": status,
+        "message": message,
+        "candle_time": str(candle_time) if candle_time else None,
+        "age_seconds": round(age, 1) if age is not None else None,
+        "checked_at": now_ist().isoformat()
+
+    }
+
+
 def get_data(stock):
+
     try:
+
         df = yf.download(
             stock,
             period="5d",
             interval="1m",
             progress=False,
             threads=False,
-            auto_adjust=False
+            auto_adjust=False,
+            timeout=15
         )
 
         if df is None or df.empty:
-            return None
+            return None, "DATA UNAVAILABLE"
 
         if isinstance(df.columns, pd.MultiIndex):
             df.columns = df.columns.get_level_values(0)
 
-        required = ["Open", "High", "Low", "Close", "Volume"]
+        required = [
+            "Open", "High", "Low",
+            "Close", "Volume"
+        ]
+
         if not all(col in df.columns for col in required):
-            return None
+            return None, "INVALID DATA FORMAT"
 
         df = df[required].copy()
+
         for col in required:
-            df[col] = pd.to_numeric(df[col], errors="coerce")
+            df[col] = pd.to_numeric(
+                df[col], errors="coerce"
+            )
 
-        df = df.dropna().sort_index()
+        df = df.dropna()
+
         if df.empty:
-            return None
+            return None, "EMPTY DATA"
 
-        # Yahoo timestamps are normally timezone-aware. Normalize to IST.
+        df = df[~df.index.duplicated(keep="last")]
+        df = df.sort_index()
+
+        # Normalize timestamps to IST.
+
         if df.index.tz is None:
             df.index = df.index.tz_localize(IST)
         else:
             df.index = df.index.tz_convert(IST)
 
-        # Indicators use the available intraday history.
-        df["EMA9"] = df["Close"].ewm(span=9, adjust=False).mean()
-        df["EMA21"] = df["Close"].ewm(span=21, adjust=False).mean()
+        # Validate OHLC values.
 
-        # Session VWAP: reset at the start of each IST trading date.
-        session_date = now_ist().date()
-        today = df[df.index.date == session_date].copy()
+        valid = (
+            (df["Open"] > 0) &
+            (df["High"] > 0) &
+            (df["Low"] > 0) &
+            (df["Close"] > 0) &
+            (df["Volume"] >= 0) &
+            (df["High"] >= df["Low"]) &
+            (df["High"] >= df["Open"]) &
+            (df["High"] >= df["Close"]) &
+            (df["Low"] <= df["Open"]) &
+            (df["Low"] <= df["Close"])
+        )
 
-        if today.empty:
-            return None
+        df = df[valid]
 
-        typical_price = (today["High"] + today["Low"] + today["Close"]) / 3
-        volume_sum = today["Volume"].cumsum().replace(0, float("nan"))
-        today["VWAP"] = (typical_price * today["Volume"]).cumsum() / volume_sum
-        today["VOL_AVG20"] = today["Volume"].rolling(20).mean()
+        if df.empty:
+            return None, "INVALID OHLC DATA"
 
-        # RSI(14), retained for dashboard/context only.
-        delta = today["Close"].diff()
+        # Only today's market data.
+
+        today = now_ist().date()
+
+        df = df[df.index.date == today].copy()
+
+        if df.empty:
+            return None, "TODAY DATA UNAVAILABLE"
+
+        # Use completed one-minute candles only.
+        cutoff = (
+            now_ist()
+            .replace(second=0, microsecond=0)
+            - pd.Timedelta(minutes=1)
+        )
+
+        df = df[df.index <= cutoff]
+
+        if df.empty:
+            return None, "WAITING FOR COMPLETED CANDLE"
+
+        latest_time = df.index[-1]
+
+        age = (
+            now_ist() - latest_time.to_pydatetime()
+        ).total_seconds()
+
+        # Reject future or old candles.
+
+        if age < 0:
+            return None, "FUTURE TIMESTAMP"
+
+        if age > MAX_DATA_AGE:
+            return None, "STALE DATA"
+
+        # Indicators.
+
+        df["EMA9"] = df["Close"].ewm(
+            span=9, adjust=False
+        ).mean()
+
+        df["EMA21"] = df["Close"].ewm(
+            span=21, adjust=False
+        ).mean()
+
+        typical_price = (
+            df["High"] + df["Low"] + df["Close"]
+        ) / 3
+
+        volume_sum = df["Volume"].cumsum().replace(
+            0, float("nan")
+        )
+
+        df["VWAP"] = (
+            (typical_price * df["Volume"]).cumsum()
+            / volume_sum
+        )
+
+        df["VOL_AVG20"] = (
+            df["Volume"].rolling(20).mean()
+        )
+
+        delta = df["Close"].diff()
+
         gain = delta.clip(lower=0)
         loss = -delta.clip(upper=0)
+
         avg_gain = gain.rolling(14).mean()
         avg_loss = loss.rolling(14).mean()
-        rs = avg_gain / avg_loss.replace(0, float("nan"))
-        today["RSI"] = 100 - (100 / (1 + rs))
 
-        return today.dropna()
+        rs = avg_gain / avg_loss.replace(
+            0, float("nan")
+        )
+
+        df["RSI"] = 100 - (100 / (1 + rs))
+
+        df = df.dropna()
+
+        if len(df) < 25:
+            return None, "INSUFFICIENT INDICATOR DATA"
+
+        return df, "FRESH DATA"
 
     except Exception as exc:
+
         print("DATA ERROR:", stock, str(exc))
-        return None
+
+        return None, "DATA ERROR"
 
 
 # =========================================================
 # PORTFOLIO METRICS
 # =========================================================
+
 def portfolio_metrics(state):
-    realized = sum(float(t.get("P&L", 0)) for t in state["history"])
-    closed_brokerage = sum(
-        float(t.get("Total Brokerage", 0)) for t in state["history"]
+
+    realized = sum(
+        float(t.get("P&L", 0))
+        for t in state["history"]
     )
 
-    market_value = 0.0
-    open_cost = 0.0
-    open_buy_brokerage = 0.0
-    open_estimated_sell_brokerage = 0.0
-    unrealized_gross = 0.0
+    closed_brokerage = sum(
+        float(t.get("Total Brokerage", 0))
+        for t in state["history"]
+    )
+
+    market_value = 0
+    open_cost = 0
+    open_charges = 0
+    unrealized = 0
 
     for stock, pos in state["positions"].items():
-        qty = int(pos.get("qty", 0))
-        entry = float(pos.get("entry", 0))
-        ltp = float(state["signals"].get(stock, {}).get("price", entry))
+
+        qty = int(pos["qty"])
+        entry = float(pos["entry"])
+
+        signal = state["signals"].get(stock, {})
+
+        # Use only a fresh price for valuation.
+        health = state["data_health"].get(stock, {})
+
+        if health.get("status") == "FRESH DATA":
+            ltp = float(signal.get("price", entry))
+        else:
+            ltp = entry
 
         market_value += ltp * qty
         open_cost += entry * qty
-        open_buy_brokerage += float(pos.get("buy_brokerage", 0))
-        open_estimated_sell_brokerage += calculate_brokerage(ltp * qty)
-        unrealized_gross += (ltp - entry) * qty
 
-    open_estimated_charges = open_buy_brokerage + open_estimated_sell_brokerage
-    unrealized_net = unrealized_gross - open_estimated_charges
-    total_brokerage = closed_brokerage + open_buy_brokerage
+        open_charges += (
+            float(pos.get("buy_brokerage", 0))
+            + calculate_brokerage(ltp * qty)
+        )
+
+        unrealized += (ltp - entry) * qty
+
+    unrealized_net = unrealized - open_charges
+
     equity = float(state["cash"]) + market_value
-    total_net_pnl = realized + unrealized_net
 
     return {
+
         "realized_pnl": money(realized),
-        "unrealized_gross": money(unrealized_gross),
+
+        "unrealized_gross": money(unrealized),
+
         "unrealized_net": money(unrealized_net),
+
         "closed_brokerage": money(closed_brokerage),
-        "open_estimated_charges": money(open_estimated_charges),
-        "total_brokerage_paid": money(total_brokerage),
-        "total_brokerage_including_estimated_exit": money(
-            closed_brokerage + open_estimated_charges
-        ),
+
+        "open_estimated_charges": money(open_charges),
+
         "market_value": money(market_value),
+
         "invested_amount": money(open_cost),
+
         "equity": money(equity),
-        "total_net_pnl": money(total_net_pnl)
+
+        "total_net_pnl": money(realized + unrealized_net)
+
     }
 
 
 # =========================================================
 # CLOSE POSITION
 # =========================================================
+
 def close_position(state, stock, exit_price, reason):
+
     if stock not in state["positions"]:
         return False
 
     pos = state["positions"][stock]
+
     qty = int(pos["qty"])
     entry = float(pos["entry"])
-    exit_price = float(exit_price)
 
     if qty <= 0 or exit_price <= 0:
-        print("INVALID EXIT; POSITION KEPT OPEN:", stock)
         return False
 
     buy_value = entry * qty
     sell_value = exit_price * qty
-    buy_brokerage = float(pos.get("buy_brokerage", 0))
+
+    buy_brokerage = float(
+        pos.get("buy_brokerage", 0)
+    )
+
     sell_brokerage = calculate_brokerage(sell_value)
+
     gross_pnl = (exit_price - entry) * qty
-    total_brokerage = buy_brokerage + sell_brokerage
+
+    total_brokerage = (
+        buy_brokerage + sell_brokerage
+    )
+
     net_pnl = gross_pnl - total_brokerage
 
-    # Buy amount + buy brokerage was deducted at entry.
-    # On exit, add sale proceeds after estimated sell brokerage.
     state["cash"] += sell_value - sell_brokerage
 
     state["history"].append({
+
         "Stock": stock,
         "Entry": money(entry),
         "Exit": money(exit_price),
         "Quantity": qty,
+
         "Buy Value": money(buy_value),
         "Sell Value": money(sell_value),
+
         "Buy Brokerage": money(buy_brokerage),
         "Sell Brokerage": money(sell_brokerage),
+
         "Total Brokerage": money(total_brokerage),
+
         "Gross P&L": money(gross_pnl),
         "P&L": money(net_pnl),
+
         "Exit Reason": reason,
+
         "Time": now_ist().isoformat()
+
     })
 
     print(
-        f"CLOSED {stock} | qty={qty} | exit={exit_price:.2f} "
-        f"| brokerage={total_brokerage:.2f} | net={net_pnl:.2f} "
-        f"| reason={reason}"
+        f"CLOSED {stock} | "
+        f"NET P&L={net_pnl:.2f} | "
+        f"REASON={reason}"
     )
 
     del state["positions"][stock]
+
     save_state(state)
+
     return True
 
 
 # =========================================================
-# SQUARE OFF ALL OPEN POSITIONS
+# SAFE SQUARE OFF
 # =========================================================
+
 def square_off_all(state):
-    print("\n===== FORCE SQUARE OFF REQUESTED =====")
+
+    print("\n===== SAFE SQUARE OFF =====")
+
     state["square_off_status"] = "IN PROGRESS"
+
     save_state(state)
 
     for stock in list(state["positions"].keys()):
-        exit_price = None
 
-        # Try a fresh Yahoo Finance price first.
-        df = get_data(stock)
-        if df is not None and not df.empty:
-            candidate = float(df["Close"].iloc[-1])
-            if candidate > 0:
-                exit_price = candidate
+        df, status = get_data(stock)
 
-        # Use last scanner price only if it is from today and valid.
-        if exit_price is None:
-            signal = state["signals"].get(stock, {})
-            saved_price = signal.get("price")
-            saved_time = signal.get("updated")
+        if df is None or status != "FRESH DATA":
 
-            if saved_price and saved_time:
-                try:
-                    saved_dt = datetime.fromisoformat(saved_time)
-                    if saved_dt.tzinfo is None:
-                        saved_dt = saved_dt.replace(tzinfo=IST)
-                    age_seconds = (now_ist() - saved_dt.astimezone(IST)).total_seconds()
-                    if 0 <= age_seconds <= 300 and float(saved_price) > 0:
-                        exit_price = float(saved_price)
-                except (ValueError, TypeError):
-                    pass
+            update_data_health(
+                state,
+                stock,
+                status,
+                "SQUARE OFF PRICE NOT AVAILABLE"
+            )
 
-        # Never invent an exit price or silently close at entry.
-        if exit_price is None:
-            print("SQUARE OFF PRICE UNAVAILABLE; POSITION LEFT OPEN:", stock)
+            print(
+                "POSITION KEPT OPEN:",
+                stock,
+                status
+            )
+
             continue
 
-        close_position(state, stock, exit_price, "FORCE SQUARE OFF")
+        exit_price = float(df["Close"].iloc[-1])
+
+        if exit_price <= 0:
+            continue
+
+        close_position(
+            state,
+            stock,
+            exit_price,
+            "FORCE SQUARE OFF"
+        )
 
     if state["positions"]:
-        state["square_off_status"] = "PENDING - PRICE UNAVAILABLE"
-        state["bot_status"] = "SQUARE OFF NEEDS RETRY"
+
+        state["square_off_status"] = (
+            "PENDING - FRESH PRICE REQUIRED"
+        )
+
+        state["bot_status"] = (
+            "SQUARE OFF NEEDS RETRY"
+        )
+
     else:
+
         state["square_off_status"] = "COMPLETED"
+
         state["bot_status"] = "SESSION COMPLETED"
 
     save_state(state)
-    print("REMAINING OPEN POSITIONS:", len(state["positions"]))
+
+    print(
+        "REMAINING POSITIONS:",
+        len(state["positions"])
+    )
 
 
 # =========================================================
-# ENTRY / EXIT SIGNAL
+# ENTRY AND EXIT SIGNAL
 # =========================================================
+
 def scan_stock(stock, state):
+
     try:
-        df = get_data(stock)
-        if df is None or len(df) < 25:
-            print("INSUFFICIENT DATA:", stock)
+
+        df, status = get_data(stock)
+
+        if df is None:
+
+            update_data_health(
+                state,
+                stock,
+                status,
+                "TRADING BLOCKED"
+            )
+
+            print(
+                "NO TRADE:",
+                stock,
+                status
+            )
+
             return
+
+        update_data_health(
+            state,
+            stock,
+            "FRESH DATA",
+            "DATA VERIFIED",
+            df.index[-1],
+            (
+                now_ist() -
+                df.index[-1].to_pydatetime()
+            ).total_seconds()
+        )
 
         candle = df.iloc[-1]
         previous = df.iloc[-2]
@@ -348,80 +573,153 @@ def scan_stock(stock, state):
         low = float(candle["Low"])
         high = float(candle["High"])
         open_price = float(candle["Open"])
+
         ema9 = float(candle["EMA9"])
         ema21 = float(candle["EMA21"])
+
         vwap = float(candle["VWAP"])
         rsi = float(candle["RSI"])
+
         volume = float(candle["Volume"])
         volume_avg = float(candle["VOL_AVG20"])
+
         candle_time = str(df.index[-1])
+
+        if price <= 0 or volume_avg <= 0:
+            return
+
+        # TREND
 
         bullish_trend = (
             ema9 > ema21
             and ema9 > float(previous["EMA9"])
             and price > vwap
         )
+
         bearish_trend = (
             ema9 < ema21
             and ema9 < float(previous["EMA9"])
             and price < vwap
         )
 
-        # Pullback-and-reclaim confirmation for long entries.
+        # PULLBACK
+
         bullish_pullback = (
             low <= ema9 * 1.002
             and price > ema9
             and price > open_price
         )
+
         bearish_pullback = (
             high >= ema9 * 0.998
             and price < ema9
             and price < open_price
         )
-        volume_ok = volume > volume_avg * VOLUME_MULTIPLIER
+
+        volume_ok = (
+            volume > volume_avg * VOLUME_MULTIPLIER
+        )
 
         signal = "WAIT"
-        if bullish_trend and bullish_pullback and volume_ok and 50 <= rsi <= 75:
+
+        if (
+            bullish_trend
+            and bullish_pullback
+            and volume_ok
+            and 50 <= rsi <= 75
+        ):
             signal = "BUY"
-        elif bearish_trend and bearish_pullback and volume_ok and 25 <= rsi <= 50:
+
+        elif (
+            bearish_trend
+            and bearish_pullback
+            and volume_ok
+            and 25 <= rsi <= 50
+        ):
             signal = "SELL"
 
         state["signals"][stock] = {
+
             "price": money(price),
+
             "trend": bool(ema9 > ema21),
+
             "rsi": money(rsi),
+
             "ema9": money(ema9),
+
             "ema21": money(ema21),
+
             "vwap": money(vwap),
+
             "volume": int(volume),
+
             "volume_avg20": money(volume_avg),
-            "volume_ratio": round(volume / volume_avg, 2) if volume_avg else 0,
+
+            "volume_ratio": round(
+                volume / volume_avg, 2
+            ),
+
             "signal": signal,
+
             "candle_time": candle_time,
-            "updated": now_ist().isoformat()
+
+            "updated": now_ist().isoformat(),
+
+            "data_status": "FRESH DATA"
+
         }
 
         print(
-            f"{stock} price={price:.2f} EMA9={ema9:.2f} "
-            f"EMA21={ema21:.2f} VWAP={vwap:.2f} "
-            f"VolRatio={(volume / volume_avg):.2f} signal={signal}"
+            f"{stock} | "
+            f"PRICE={price:.2f} | "
+            f"RSI={rsi:.2f} | "
+            f"SIGNAL={signal}"
         )
 
-        # Manage an existing long position first.
+        # EXISTING POSITION MANAGEMENT
+
         if stock in state["positions"]:
+
             pos = state["positions"][stock]
 
             if low <= float(pos["stop"]):
-                close_position(state, stock, float(pos["stop"]), "STOP LOSS")
+
+                close_position(
+                    state,
+                    stock,
+                    float(pos["stop"]),
+                    "STOP LOSS"
+                )
+
             elif high >= float(pos["target"]):
-                close_position(state, stock, float(pos["target"]), "TARGET")
+
+                close_position(
+                    state,
+                    stock,
+                    float(pos["target"]),
+                    "TARGET"
+                )
+
             elif signal == "SELL":
-                close_position(state, stock, price, "BEARISH SIGNAL")
+
+                close_position(
+                    state,
+                    stock,
+                    price,
+                    "BEARISH SIGNAL"
+                )
+
             return
 
-        # One entry decision per Yahoo 1-minute candle.
-        if state["last_processed"].get(stock) == candle_time:
+        # ONE ENTRY PER COMPLETED CANDLE
+
+        if (
+            state["last_processed"].get(stock)
+            == candle_time
+        ):
             return
+
         state["last_processed"][stock] = candle_time
 
         if signal != "BUY":
@@ -431,127 +729,262 @@ def scan_stock(stock, state):
             print("MAX OPEN TRADES REACHED")
             return
 
-        # Use the preceding five candles' lows for stop calculation.
-        stop = float(df["Low"].iloc[-6:-1].min())
+        # STOP LOSS
+
+        stop = float(
+            df["Low"].iloc[-6:-1].min()
+        )
+
         if stop <= 0 or stop >= price:
-            print("INVALID STOP:", stock)
             return
 
         risk_per_share = price - stop
-        qty_by_risk = int(RISK_PER_TRADE / risk_per_share)
-        qty_by_amount = int(TRADE_AMOUNT / price)
-        qty_by_cash = int(state["cash"] / (price * (1 + BROKERAGE_RATE)))
-        qty = min(qty_by_risk, qty_by_amount, qty_by_cash)
+
+        qty_by_risk = int(
+            RISK_PER_TRADE / risk_per_share
+        )
+
+        qty_by_amount = int(
+            TRADE_AMOUNT / price
+        )
+
+        qty_by_cash = int(
+            state["cash"] /
+            (price * (1 + BROKERAGE_RATE))
+        )
+
+        qty = min(
+            qty_by_risk,
+            qty_by_amount,
+            qty_by_cash
+        )
 
         if qty <= 0:
-            print("QUANTITY ZERO:", stock)
             return
 
         buy_value = qty * price
-        buy_brokerage = calculate_brokerage(buy_value)
-        total_cost = buy_value + buy_brokerage
+
+        buy_brokerage = calculate_brokerage(
+            buy_value
+        )
+
+        total_cost = (
+            buy_value + buy_brokerage
+        )
 
         if total_cost > float(state["cash"]):
-            print("INSUFFICIENT CASH:", stock)
             return
 
-        target = price + (REWARD_RISK * risk_per_share)
+        target = (
+            price + REWARD_RISK * risk_per_share
+        )
 
         state["cash"] -= total_cost
+
         state["positions"][stock] = {
+
             "entry": money(price),
+
             "stop": money(stop),
+
             "target": money(target),
+
             "qty": int(qty),
+
             "buy_value": money(buy_value),
+
             "buy_brokerage": money(buy_brokerage),
+
             "entry_time": now_ist().isoformat()
+
         }
 
         print(
-            f"BUY PAPER TRADE: {stock} | entry={price:.2f} "
-            f"| qty={qty} | buy brokerage={buy_brokerage:.2f} "
-            f"| SL={stop:.2f} | target={target:.2f}"
+            f"BUY PAPER TRADE: {stock} | "
+            f"PRICE={price:.2f} | "
+            f"QTY={qty} | "
+            f"SL={stop:.2f} | "
+            f"TARGET={target:.2f}"
         )
+
         save_state(state)
 
     except Exception as exc:
+
         print("SCAN ERROR:", stock, str(exc))
 
 
 # =========================================================
-# PORTFOLIO SUMMARY
+# PORTFOLIO REPORT
 # =========================================================
+
 def show_portfolio(state):
+
     metrics = portfolio_metrics(state)
 
-    print("\n========== PORTFOLIO ==========")
+    print("\n========== V6 PORTFOLIO ==========")
+
+    print("CAPITAL:", state["capital"])
+
     print("AVAILABLE CASH:", money(state["cash"]))
-    print("INVESTED AMOUNT:", metrics["invested_amount"])
+
+    print("INVESTED:", metrics["invested_amount"])
+
     print("MARKET VALUE:", metrics["market_value"])
+
     print("OPEN TRADES:", len(state["positions"]))
+
     print("CLOSED TRADES:", len(state["history"]))
-    print("CLOSED BROKERAGE:", metrics["closed_brokerage"])
-    print("OPEN ESTIMATED CHARGES:", metrics["open_estimated_charges"])
-    print("REALIZED NET P&L:", metrics["realized_pnl"])
-    print("UNREALIZED NET P&L:", metrics["unrealized_net"])
+
+    print("REALIZED P&L:", metrics["realized_pnl"])
+
+    print("UNREALIZED NET:", metrics["unrealized_net"])
+
     print("TOTAL NET P&L:", metrics["total_net_pnl"])
+
     print("ESTIMATED EQUITY:", metrics["equity"])
-    print("================================\n")
+
+    print("==================================\n")
+
+
+# =========================================================
+# DATA HEALTH REPORT
+# =========================================================
+
+def show_data_health(state):
+
+    print("\n========== DATA HEALTH ==========")
+
+    for stock in STOCKS:
+
+        health = state["data_health"].get(stock, {})
+
+        status = health.get(
+            "status",
+            "NOT CHECKED"
+        )
+
+        age = health.get(
+            "age_seconds"
+        )
+
+        print(
+            stock,
+            "|",
+            status,
+            "| AGE:",
+            age
+        )
+
+    print("=================================\n")
 
 
 # =========================================================
 # MAIN ENGINE
 # =========================================================
+
 def main():
+
     now = now_ist()
+
     state = load_state()
 
-    print("CURRENT IST TIME:", now.isoformat())
+    print("CURRENT IST:", now.isoformat())
+
+    # WEEKEND
 
     if now.weekday() >= 5:
-        state["bot_status"] = "MARKET CLOSED - WEEKEND"
+
+        state["bot_status"] = "MARKET CLOSED"
+
         save_state(state)
-        print("Weekend. No trading.")
+
+        print("WEEKEND - NO TRADING")
+
         return
+
+    # BEFORE MARKET
 
     if now.time() < MARKET_START:
+
         state["bot_status"] = "WAITING FOR MARKET"
+
         save_state(state)
-        print("Market has not started.")
+
+        print("WAITING FOR MARKET")
+
         return
+
+    # AFTER SQUARE OFF TIME
 
     if now.time() >= SQUARE_OFF_TIME:
+
         square_off_all(state)
+
         show_portfolio(state)
+
+        show_data_health(state)
+
         return
 
-    end_time = datetime.combine(now.date(), SQUARE_OFF_TIME, tzinfo=IST)
-    state["bot_status"] = "TRADING"
-    state["square_off_status"] = "NOT DUE"
+    # MAIN LOOP
+
+    end_time = datetime.combine(
+        now.date(),
+        SQUARE_OFF_TIME,
+        tzinfo=IST
+    )
+
+    state["bot_status"] = "V6 TRADING"
+
     save_state(state)
 
-    print("TRADING LOOP STARTED; SCAN INTERVAL:", SCAN_INTERVAL, "seconds")
+    print("\nSMART DATA PROTECTION ACTIVE")
+
+    print("MAX DATA AGE:", MAX_DATA_AGE, "SECONDS")
+
+    print("SCAN INTERVAL:", SCAN_INTERVAL)
 
     while now_ist() < end_time:
+
         for stock in STOCKS:
+
             if now_ist() >= end_time:
                 break
 
             scan_stock(stock, state)
+
             save_state(state)
 
         show_portfolio(state)
 
-        remaining = (end_time - now_ist()).total_seconds()
+        show_data_health(state)
+
+        remaining = (
+            end_time - now_ist()
+        ).total_seconds()
+
         if remaining > 0:
-            time.sleep(min(SCAN_INTERVAL, remaining))
 
-    # This runs if the same GitHub Actions job stays alive until 3 PM.
+            time.sleep(
+                min(SCAN_INTERVAL, remaining)
+            )
+
+    # FINAL SQUARE OFF
+
     square_off_all(state)
-    show_portfolio(state)
-    print("TRADING SESSION FINISHED")
 
+    show_portfolio(state)
+
+    show_data_health(state)
+
+    print("\nV6 TRADING SESSION FINISHED")
+
+
+# =========================================================
+# START
+# =========================================================
 
 if __name__ == "__main__":
+
     main()
