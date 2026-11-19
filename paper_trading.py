@@ -30,7 +30,16 @@ STOCKS = [
     "TCS.NS",
     "INFY.NS",
     "TMPV.NS",
-    "TMCV.NS"
+    "TMCV.NS",
+
+    "AXISBANK.NS",
+    "KOTAKBANK.NS",
+    "BAJFINANCE.NS",
+    "LT.NS",
+    "BHARTIARTL.NS",
+    "ITC.NS",
+    "SUNPHARMA.NS",
+    "HINDUNILVR.NS"
 ]
 
 FILE = "paper_state.json"
