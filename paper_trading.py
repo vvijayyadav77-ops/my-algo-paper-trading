@@ -7,7 +7,7 @@ import time
 from datetime import datetime, time as dt_time
 from zoneinfo import ZoneInfo
 
-print("CONTINUOUS PAPER TRADING BOT STARTED")
+print("FAST ENTRY PAPER TRADING BOT V2 STARTED")
 
 # =========================
 # SETTINGS
@@ -110,8 +110,15 @@ def get_data(stock):
 
     df = df.sort_index()
 
-    df["EMA20"] = df["Close"].ewm(span=20).mean()
-    df["EMA50"] = df["Close"].ewm(span=50).mean()
+    df["EMA9"] = df["Close"].ewm(
+        span=9,
+        adjust=False
+    ).mean()
+
+    df["EMA20"] = df["Close"].ewm(
+        span=20,
+        adjust=False
+    ).mean()
 
     delta = df["Close"].diff()
 
@@ -124,8 +131,6 @@ def get_data(stock):
     rs = avg_gain / avg_loss.replace(0, float("nan"))
 
     df["RSI"] = 100 - (100 / (1 + rs))
-
-    df["AVG_VOLUME"] = df["Volume"].rolling(20).mean()
 
     return df.dropna()
 
@@ -140,50 +145,35 @@ def scan_stock(stock, state):
 
         df = get_data(stock)
 
-        if df is None or len(df) < 50:
+        if df is None or len(df) < 30:
 
             print("INSUFFICIENT DATA:", stock)
             return
 
         candle = df.iloc[-1]
-        previous = df.iloc[-21:-1]
 
         candle_time = str(df.index[-1])
 
         price = float(candle["Close"])
-
         low = float(candle["Low"])
         high = float(candle["High"])
 
-        breakout = (
-            price > float(previous["High"].max())
-        )
-
-        volume_spike = (
-            candle["Volume"] >
-            candle["AVG_VOLUME"] * 1.5
-        )
-
-        trend = (
-            candle["EMA20"] > candle["EMA50"]
-        )
-
+        ema9 = float(candle["EMA9"])
+        ema20 = float(candle["EMA20"])
         rsi = float(candle["RSI"])
 
-        rsi_ok = 50 < rsi < 70
+        trend = ema9 > ema20
+
+        rsi_ok = 45 < rsi < 75
 
         signal = "WAIT"
 
-        if (
-            breakout
-            and volume_spike
-            and trend
-            and rsi_ok
-        ):
+        if trend and rsi_ok:
+
             signal = "BUY"
 
         # =====================
-        # DASHBOARD SIGNAL DATA
+        # DASHBOARD DATA
         # =====================
 
         state["signals"][stock] = {
@@ -202,18 +192,11 @@ def scan_stock(stock, state):
 
         print("\nSTOCK:", stock)
         print("PRICE:", price)
+        print("EMA9:", round(ema9, 2))
+        print("EMA20:", round(ema20, 2))
         print("TREND:", trend)
         print("RSI:", round(rsi, 2))
         print("SIGNAL:", signal)
-
-        # =====================
-        # PREVENT DUPLICATE TRADE
-        # =====================
-
-        if state["last_processed"].get(stock) == candle_time:
-            return
-
-        state["last_processed"][stock] = candle_time
 
         # =====================
         # EXIT CHECK
@@ -254,7 +237,9 @@ def scan_stock(stock, state):
 
                 })
 
-                print("SELL:", stock)
+                print("\n===== SELL EXECUTED =====")
+                print("STOCK:", stock)
+                print("EXIT:", exit_price)
                 print("P&L:", round(pnl, 2))
 
                 del state["positions"][stock]
@@ -262,58 +247,85 @@ def scan_stock(stock, state):
             return
 
         # =====================
-        # BUY CONDITIONS
+        # BUY CHECK
         # =====================
 
-        if signal == "BUY":
+        if state["last_processed"].get(stock) == candle_time:
 
-            if len(state["positions"]) >= MAX_TRADES:
-                return
+            print("SAME CANDLE:", stock)
+            return
 
-            stop = float(
-                previous["Low"].tail(5).min()
-            )
+        state["last_processed"][stock] = candle_time
 
-            if stop <= 0 or stop >= price:
-                return
+        if signal != "BUY":
 
-            risk_per_share = price - stop
+            print("BUY CONDITION NOT MET")
+            return
 
-            qty = min(
+        if len(state["positions"]) >= MAX_TRADES:
 
-                int(RISK / risk_per_share),
+            print("MAX TRADES REACHED")
+            return
 
-                int(TRADE_AMOUNT / price)
+        # =====================
+        # STOP LOSS
+        # =====================
 
-            )
+        stop = float(
+            df["Low"].iloc[-6:-1].min()
+        )
 
-            if qty <= 0:
-                return
+        if stop <= 0 or stop >= price:
 
-            cost = qty * price
+            print("INVALID STOP LOSS")
+            return
 
-            if cost > state["cash"]:
-                return
+        risk_per_share = price - stop
 
-            target = price + (2 * risk_per_share)
+        qty = min(
 
-            state["cash"] -= cost
+            int(RISK / risk_per_share),
 
-            state["positions"][stock] = {
+            int(TRADE_AMOUNT / price)
 
-                "entry": price,
-                "stop": stop,
-                "target": target,
-                "qty": qty
+        )
 
-            }
+        if qty <= 0:
 
-            print("\n===== BUY SIGNAL =====")
-            print("STOCK:", stock)
-            print("ENTRY:", price)
-            print("STOP LOSS:", stop)
-            print("TARGET:", target)
-            print("QUANTITY:", qty)
+            print("QUANTITY ZERO")
+            return
+
+        cost = qty * price
+
+        if cost > state["cash"]:
+
+            print("INSUFFICIENT CASH")
+            return
+
+        target = price + (1.5 * risk_per_share)
+
+        # =====================
+        # EXECUTE PAPER BUY
+        # =====================
+
+        state["cash"] -= cost
+
+        state["positions"][stock] = {
+
+            "entry": price,
+            "stop": stop,
+            "target": target,
+            "qty": qty
+
+        }
+
+        print("\n===== BUY EXECUTED =====")
+        print("STOCK:", stock)
+        print("ENTRY:", price)
+        print("STOP:", stop)
+        print("TARGET:", target)
+        print("QUANTITY:", qty)
+        print("INVESTMENT:", round(cost, 2))
 
     except Exception as e:
 
@@ -383,13 +395,6 @@ def main():
 
     print("\n===== CONTINUOUS TRADING STARTED =====")
 
-    print("START:", now)
-    print("STOP:", end_time)
-
-    # =====================
-    # CONTINUOUS LOOP
-    # =====================
-
     while datetime.now(IST) < end_time:
 
         print("\n-------------------------")
@@ -402,9 +407,6 @@ def main():
                 break
 
             scan_stock(stock, state)
-
-            # Save after every stock so dashboard
-            # can see the latest available data.
 
             save_state(state)
 
