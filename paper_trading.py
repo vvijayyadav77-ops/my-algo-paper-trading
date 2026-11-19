@@ -81,7 +81,7 @@ def get_data(stock):
     df = yf.download(
         stock,
         period="5d",
-        interval="5m",
+        interval="1m",
         progress=False,
         threads=False
     )
