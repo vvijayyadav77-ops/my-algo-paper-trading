@@ -1,289 +1,292 @@
 {
-    "cash": 10008.970155639649,
-    "positions": {},
-    "history": [
-        {
-            "Stock": "SBIN.NS",
-            "Entry": 1147.050048828125,
-            "Exit": 1147.1251220703125,
-            "Quantity": 1,
-            "P&L": 0.08,
-            "Time": "2026-11-19T13:36:33.612669+05:30"
-        },
-        {
-            "Stock": "INFY.NS",
-            "Entry": 1075.9000244140625,
-            "Exit": 1076.9501342773438,
-            "Quantity": 1,
-            "P&L": 1.05,
-            "Time": "2026-11-19T13:38:08.352588+05:30"
-        },
-        {
-            "Stock": "TMPV.NS",
-            "Entry": 262.3500061035156,
-            "Exit": 262.1499938964844,
-            "Quantity": 7,
-            "P&L": -1.4,
-            "Time": "2026-11-19T13:55:27.672730+05:30"
-        },
-        {
-            "Stock": "KOTAKBANK.NS",
-            "Entry": 500.6499938964844,
-            "Exit": 500.1499938964844,
-            "Quantity": 3,
-            "P&L": -1.5,
-            "Time": "2026-11-19T13:56:30.767782+05:30"
-        },
-        {
-            "Stock": "KOTAKBANK.NS",
-            "Entry": 500.1000061035156,
-            "Exit": 500.4000244140625,
-            "Quantity": 3,
-            "P&L": 0.9,
-            "Time": "2026-11-19T14:01:13.927611+05:30"
-        },
-        {
-            "Stock": "HDFCBANK.NS",
-            "Entry": 816.75,
-            "Exit": 819.1499633789062,
-            "Quantity": 2,
-            "P&L": 4.8,
-            "Time": "2026-11-19T14:09:36.685027+05:30"
-        },
-        {
-            "Stock": "KOTAKBANK.NS",
-            "Entry": 500.3999938964844,
-            "Exit": 500.7749938964844,
-            "Quantity": 3,
-            "P&L": 1.12,
-            "Time": "2026-11-19T14:10:40.363115+05:30"
-        },
-        {
-            "Stock": "TMPV.NS",
-            "Entry": 262.45001220703125,
-            "Exit": 262.0,
-            "Quantity": 7,
-            "P&L": -3.15,
-            "Time": "2026-11-19T14:14:20.576236+05:30"
-        },
-        {
-            "Stock": "SBIN.NS",
-            "Entry": 1156.699951171875,
-            "Exit": 1152.199951171875,
-            "Quantity": 1,
-            "P&L": -4.5,
-            "Time": "2026-11-19T14:21:40.876179+05:30"
-        },
-        {
-            "Stock": "HDFCBANK.NS",
-            "Entry": 818.5999755859375,
-            "Exit": 819.1249389648438,
-            "Quantity": 2,
-            "P&L": 1.05,
-            "Time": "2026-11-19T14:25:52.921538+05:30"
-        },
-        {
-            "Stock": "HDFCBANK.NS",
-            "Entry": 819.1500244140625,
-            "Exit": 820.5000610351562,
-            "Quantity": 2,
-            "P&L": 2.7,
-            "Time": "2026-11-19T14:36:22.572266+05:30"
-        },
-        {
-            "Stock": "ICICIBANK.NS",
-            "Entry": 1607.5999755859375,
-            "Exit": 1607.0999755859375,
-            "Quantity": 1,
-            "P&L": -0.5,
-            "Time": "2026-11-19T14:39:00.028037+05:30"
-        },
-        {
-            "Stock": "SBIN.NS",
-            "Entry": 1154.8499755859375,
-            "Exit": 1154.0999755859375,
-            "Quantity": 1,
-            "P&L": -0.75,
-            "Time": "2026-11-19T14:41:06.114398+05:30"
-        },
-        {
-            "Stock": "KOTAKBANK.NS",
-            "Entry": 502.0,
-            "Exit": 502.15000915527344,
-            "Quantity": 3,
-            "P&L": 0.45,
-            "Time": "2026-11-19T14:41:38.140747+05:30"
-        },
-        {
-            "Stock": "SBIN.NS",
-            "Entry": 1154.0,
-            "Exit": 1154.6000366210938,
-            "Quantity": 1,
-            "P&L": 0.6,
-            "Time": "2026-11-19T14:43:11.890475+05:30"
-        },
-        {
-            "Stock": "TMCV.NS",
-            "Entry": 444.65,
-            "Exit": 445.6,
-            "Quantity": 4,
-            "Buy Value": 1778.6,
-            "Sell Value": 1782.4,
-            "Buy Brokerage": 0.0,
-            "Sell Brokerage": 0.89,
-            "Total Brokerage": 0.89,
-            "Gross P&L": 3.8,
-            "P&L": 2.91,
-            "Exit Reason": "FORCE SQUARE OFF",
-            "Time": "2026-11-19T15:59:07.563783+05:30"
-        },
-        {
-            "Stock": "AXISBANK.NS",
-            "Entry": 1375.0,
-            "Exit": 1380.8,
-            "Quantity": 1,
-            "Buy Value": 1375.0,
-            "Sell Value": 1380.8,
-            "Buy Brokerage": 0.0,
-            "Sell Brokerage": 0.69,
-            "Total Brokerage": 0.69,
-            "Gross P&L": 5.8,
-            "P&L": 5.11,
-            "Exit Reason": "FORCE SQUARE OFF",
-            "Time": "2026-11-19T15:59:07.944731+05:30"
-        }
-    ],
-    "last_processed": {
-        "RELIANCE.NS": "2026-11-19 14:59:00+05:30",
-        "HDFCBANK.NS": "2026-11-19 14:59:00+05:30",
-        "ICICIBANK.NS": "2026-11-19 14:59:00+05:30",
-        "SBIN.NS": "2026-11-19 14:59:00+05:30",
-        "TCS.NS": "2026-11-19 14:59:00+05:30",
-        "INFY.NS": "2026-11-19 14:59:00+05:30",
-        "TMPV.NS": "2026-11-19 14:59:00+05:30",
-        "TMCV.NS": "2026-11-19 14:14:00+05:30",
-        "AXISBANK.NS": "2026-11-19 14:43:00+05:30",
-        "KOTAKBANK.NS": "2026-11-19 14:59:00+05:30",
-        "BAJFINANCE.NS": "2026-11-19 14:59:00+05:30",
-        "LT.NS": "2026-11-19 14:59:00+05:30",
-        "BHARTIARTL.NS": "2026-11-19 14:59:00+05:30",
-        "ITC.NS": "2026-11-19 14:59:00+05:30",
-        "SUNPHARMA.NS": "2026-11-19 14:59:00+05:30",
-        "HINDUNILVR.NS": "2026-11-19 14:59:00+05:30"
+  "cash": 10008.970155639649,
+  "positions": {},
+  "history": [
+    {
+      "Stock": "SBIN.NS",
+      "Entry": 1147.050048828125,
+      "Exit": 1147.1251220703125,
+      "Quantity": 1,
+      "P&L": 0.08,
+      "Time": "2026-11-19T13:36:33.612669+05:30"
     },
-    "signals": {
-        "RELIANCE.NS": {
-            "price": 1375.3,
-            "trend": false,
-            "rsi": 66.67,
-            "signal": "WAIT",
-            "updated": "2026-11-19T14:59:59.529315+05:30"
-        },
-        "HDFCBANK.NS": {
-            "price": 820.0,
-            "trend": false,
-            "rsi": 47.5,
-            "signal": "WAIT",
-            "updated": "2026-11-19T14:59:59.620790+05:30"
-        },
-        "ICICIBANK.NS": {
-            "price": 1603.9,
-            "trend": false,
-            "rsi": 45.98,
-            "signal": "WAIT",
-            "updated": "2026-11-19T14:59:59.704283+05:30"
-        },
-        "SBIN.NS": {
-            "price": 1155.05,
-            "trend": true,
-            "rsi": 53.09,
-            "signal": "BUY",
-            "updated": "2026-11-19T14:59:59.795791+05:30"
-        },
-        "TCS.NS": {
-            "price": 2342.4,
-            "trend": false,
-            "rsi": 60.53,
-            "signal": "WAIT",
-            "updated": "2026-11-19T14:59:59.880449+05:30"
-        },
-        "INFY.NS": {
-            "price": 1088.1,
-            "trend": true,
-            "rsi": 73.48,
-            "signal": "BUY",
-            "updated": "2026-11-19T14:59:59.969818+05:30"
-        },
-        "TMPV.NS": {
-            "price": 261.25,
-            "trend": false,
-            "rsi": 47.06,
-            "signal": "WAIT",
-            "updated": "2026-11-19T15:00:00.081718+05:30"
-        },
-        "TMCV.NS": {
-            "price": 444.1,
-            "trend": false,
-            "rsi": 24.44,
-            "signal": "WAIT",
-            "updated": "2026-11-19T14:59:28.752587+05:30"
-        },
-        "AXISBANK.NS": {
-            "price": 1374.5,
-            "trend": true,
-            "rsi": 57.81,
-            "signal": "BUY",
-            "updated": "2026-11-19T14:59:28.849652+05:30"
-        },
-        "KOTAKBANK.NS": {
-            "price": 500.25,
-            "trend": false,
-            "rsi": 28.05,
-            "signal": "WAIT",
-            "updated": "2026-11-19T14:59:28.926909+05:30"
-        },
-        "BAJFINANCE.NS": {
-            "price": 1092.1,
-            "trend": false,
-            "rsi": 41.86,
-            "signal": "WAIT",
-            "updated": "2026-11-19T14:59:29.005278+05:30"
-        },
-        "LT.NS": {
-            "price": 4191.9,
-            "trend": true,
-            "rsi": 53.24,
-            "signal": "BUY",
-            "updated": "2026-11-19T14:59:29.103613+05:30"
-        },
-        "BHARTIARTL.NS": {
-            "price": 2152.3,
-            "trend": false,
-            "rsi": 61.33,
-            "signal": "WAIT",
-            "updated": "2026-11-19T14:59:29.194517+05:30"
-        },
-        "ITC.NS": {
-            "price": 300.75,
-            "trend": true,
-            "rsi": 69.77,
-            "signal": "BUY",
-            "updated": "2026-11-19T14:59:29.267907+05:30"
-        },
-        "SUNPHARMA.NS": {
-            "price": 1904.5,
-            "trend": false,
-            "rsi": 32.67,
-            "signal": "WAIT",
-            "updated": "2026-11-19T14:59:29.356124+05:30"
-        },
-        "HINDUNILVR.NS": {
-            "price": 2066.0,
-            "trend": true,
-            "rsi": 72.32,
-            "signal": "BUY",
-            "updated": "2026-11-19T14:59:29.442575+05:30"
-        }
+    {
+      "Stock": "INFY.NS",
+      "Entry": 1075.9000244140625,
+      "Exit": 1076.9501342773438,
+      "Quantity": 1,
+      "P&L": 1.05,
+      "Time": "2026-11-19T13:38:08.352588+05:30"
     },
-    "updated": "2026-11-19T15:59:07.945613+05:30"
+    {
+      "Stock": "TMPV.NS",
+      "Entry": 262.3500061035156,
+      "Exit": 262.1499938964844,
+      "Quantity": 7,
+      "P&L": -1.4,
+      "Time": "2026-11-19T13:55:27.672730+05:30"
+    },
+    {
+      "Stock": "KOTAKBANK.NS",
+      "Entry": 500.6499938964844,
+      "Exit": 500.1499938964844,
+      "Quantity": 3,
+      "P&L": -1.5,
+      "Time": "2026-11-19T13:56:30.767782+05:30"
+    },
+    {
+      "Stock": "KOTAKBANK.NS",
+      "Entry": 500.1000061035156,
+      "Exit": 500.4000244140625,
+      "Quantity": 3,
+      "P&L": 0.9,
+      "Time": "2026-11-19T14:01:13.927611+05:30"
+    },
+    {
+      "Stock": "HDFCBANK.NS",
+      "Entry": 816.75,
+      "Exit": 819.1499633789062,
+      "Quantity": 2,
+      "P&L": 4.8,
+      "Time": "2026-11-19T14:09:36.685027+05:30"
+    },
+    {
+      "Stock": "KOTAKBANK.NS",
+      "Entry": 500.3999938964844,
+      "Exit": 500.7749938964844,
+      "Quantity": 3,
+      "P&L": 1.12,
+      "Time": "2026-11-19T14:10:40.363115+05:30"
+    },
+    {
+      "Stock": "TMPV.NS",
+      "Entry": 262.45001220703125,
+      "Exit": 262.0,
+      "Quantity": 7,
+      "P&L": -3.15,
+      "Time": "2026-11-19T14:14:20.576236+05:30"
+    },
+    {
+      "Stock": "SBIN.NS",
+      "Entry": 1156.699951171875,
+      "Exit": 1152.199951171875,
+      "Quantity": 1,
+      "P&L": -4.5,
+      "Time": "2026-11-19T14:21:40.876179+05:30"
+    },
+    {
+      "Stock": "HDFCBANK.NS",
+      "Entry": 818.5999755859375,
+      "Exit": 819.1249389648438,
+      "Quantity": 2,
+      "P&L": 1.05,
+      "Time": "2026-11-19T14:25:52.921538+05:30"
+    },
+    {
+      "Stock": "HDFCBANK.NS",
+      "Entry": 819.1500244140625,
+      "Exit": 820.5000610351562,
+      "Quantity": 2,
+      "P&L": 2.7,
+      "Time": "2026-11-19T14:36:22.572266+05:30"
+    },
+    {
+      "Stock": "ICICIBANK.NS",
+      "Entry": 1607.5999755859375,
+      "Exit": 1607.0999755859375,
+      "Quantity": 1,
+      "P&L": -0.5,
+      "Time": "2026-11-19T14:39:00.028037+05:30"
+    },
+    {
+      "Stock": "SBIN.NS",
+      "Entry": 1154.8499755859375,
+      "Exit": 1154.0999755859375,
+      "Quantity": 1,
+      "P&L": -0.75,
+      "Time": "2026-11-19T14:41:06.114398+05:30"
+    },
+    {
+      "Stock": "KOTAKBANK.NS",
+      "Entry": 502.0,
+      "Exit": 502.15000915527344,
+      "Quantity": 3,
+      "P&L": 0.45,
+      "Time": "2026-11-19T14:41:38.140747+05:30"
+    },
+    {
+      "Stock": "SBIN.NS",
+      "Entry": 1154.0,
+      "Exit": 1154.6000366210938,
+      "Quantity": 1,
+      "P&L": 0.6,
+      "Time": "2026-11-19T14:43:11.890475+05:30"
+    },
+    {
+      "Stock": "TMCV.NS",
+      "Entry": 444.65,
+      "Exit": 445.6,
+      "Quantity": 4,
+      "Buy Value": 1778.6,
+      "Sell Value": 1782.4,
+      "Buy Brokerage": 0.0,
+      "Sell Brokerage": 0.89,
+      "Total Brokerage": 0.89,
+      "Gross P&L": 3.8,
+      "P&L": 2.91,
+      "Exit Reason": "FORCE SQUARE OFF",
+      "Time": "2026-11-19T15:59:07.563783+05:30"
+    },
+    {
+      "Stock": "AXISBANK.NS",
+      "Entry": 1375.0,
+      "Exit": 1380.8,
+      "Quantity": 1,
+      "Buy Value": 1375.0,
+      "Sell Value": 1380.8,
+      "Buy Brokerage": 0.0,
+      "Sell Brokerage": 0.69,
+      "Total Brokerage": 0.69,
+      "Gross P&L": 5.8,
+      "P&L": 5.11,
+      "Exit Reason": "FORCE SQUARE OFF",
+      "Time": "2026-11-19T15:59:07.944731+05:30"
+    }
+  ],
+  "last_processed": {
+    "RELIANCE.NS": "2026-11-19 14:59:00+05:30",
+    "HDFCBANK.NS": "2026-11-19 14:59:00+05:30",
+    "ICICIBANK.NS": "2026-11-19 14:59:00+05:30",
+    "SBIN.NS": "2026-11-19 14:59:00+05:30",
+    "TCS.NS": "2026-11-19 14:59:00+05:30",
+    "INFY.NS": "2026-11-19 14:59:00+05:30",
+    "TMPV.NS": "2026-11-19 14:59:00+05:30",
+    "TMCV.NS": "2026-11-19 14:14:00+05:30",
+    "AXISBANK.NS": "2026-11-19 14:43:00+05:30",
+    "KOTAKBANK.NS": "2026-11-19 14:59:00+05:30",
+    "BAJFINANCE.NS": "2026-11-19 14:59:00+05:30",
+    "LT.NS": "2026-11-19 14:59:00+05:30",
+    "BHARTIARTL.NS": "2026-11-19 14:59:00+05:30",
+    "ITC.NS": "2026-11-19 14:59:00+05:30",
+    "SUNPHARMA.NS": "2026-11-19 14:59:00+05:30",
+    "HINDUNILVR.NS": "2026-11-19 14:59:00+05:30"
+  },
+  "signals": {
+    "RELIANCE.NS": {
+      "price": 1375.3,
+      "trend": false,
+      "rsi": 66.67,
+      "signal": "WAIT",
+      "updated": "2026-11-19T14:59:59.529315+05:30"
+    },
+    "HDFCBANK.NS": {
+      "price": 820.0,
+      "trend": false,
+      "rsi": 47.5,
+      "signal": "WAIT",
+      "updated": "2026-11-19T14:59:59.620790+05:30"
+    },
+    "ICICIBANK.NS": {
+      "price": 1603.9,
+      "trend": false,
+      "rsi": 45.98,
+      "signal": "WAIT",
+      "updated": "2026-11-19T14:59:59.704283+05:30"
+    },
+    "SBIN.NS": {
+      "price": 1155.05,
+      "trend": true,
+      "rsi": 53.09,
+      "signal": "BUY",
+      "updated": "2026-11-19T14:59:59.795791+05:30"
+    },
+    "TCS.NS": {
+      "price": 2342.4,
+      "trend": false,
+      "rsi": 60.53,
+      "signal": "WAIT",
+      "updated": "2026-11-19T14:59:59.880449+05:30"
+    },
+    "INFY.NS": {
+      "price": 1088.1,
+      "trend": true,
+      "rsi": 73.48,
+      "signal": "BUY",
+      "updated": "2026-11-19T14:59:59.969818+05:30"
+    },
+    "TMPV.NS": {
+      "price": 261.25,
+      "trend": false,
+      "rsi": 47.06,
+      "signal": "WAIT",
+      "updated": "2026-11-19T15:00:00.081718+05:30"
+    },
+    "TMCV.NS": {
+      "price": 444.1,
+      "trend": false,
+      "rsi": 24.44,
+      "signal": "WAIT",
+      "updated": "2026-11-19T14:59:28.752587+05:30"
+    },
+    "AXISBANK.NS": {
+      "price": 1374.5,
+      "trend": true,
+      "rsi": 57.81,
+      "signal": "BUY",
+      "updated": "2026-11-19T14:59:28.849652+05:30"
+    },
+    "KOTAKBANK.NS": {
+      "price": 500.25,
+      "trend": false,
+      "rsi": 28.05,
+      "signal": "WAIT",
+      "updated": "2026-11-19T14:59:28.926909+05:30"
+    },
+    "BAJFINANCE.NS": {
+      "price": 1092.1,
+      "trend": false,
+      "rsi": 41.86,
+      "signal": "WAIT",
+      "updated": "2026-11-19T14:59:29.005278+05:30"
+    },
+    "LT.NS": {
+      "price": 4191.9,
+      "trend": true,
+      "rsi": 53.24,
+      "signal": "BUY",
+      "updated": "2026-11-19T14:59:29.103613+05:30"
+    },
+    "BHARTIARTL.NS": {
+      "price": 2152.3,
+      "trend": false,
+      "rsi": 61.33,
+      "signal": "WAIT",
+      "updated": "2026-11-19T14:59:29.194517+05:30"
+    },
+    "ITC.NS": {
+      "price": 300.75,
+      "trend": true,
+      "rsi": 69.77,
+      "signal": "BUY",
+      "updated": "2026-11-19T14:59:29.267907+05:30"
+    },
+    "SUNPHARMA.NS": {
+      "price": 1904.5,
+      "trend": false,
+      "rsi": 32.67,
+      "signal": "WAIT",
+      "updated": "2026-11-19T14:59:29.356124+05:30"
+    },
+    "HINDUNILVR.NS": {
+      "price": 2066.0,
+      "trend": true,
+      "rsi": 72.32,
+      "signal": "BUY",
+      "updated": "2026-11-19T14:59:29.442575+05:30"
+    }
+  },
+  "updated": "2026-11-19T17:26:57.362943+05:30",
+  "capital": 10000.0,
+  "bot_status": "SESSION COMPLETED",
+  "square_off_status": "COMPLETED"
 }
