@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Algo Trading Dashboard</title>
-
-<style>
+<title>My Algo Trading Dashboard</title><style>
 body {
     margin: 0;
     padding: 15px;
@@ -24,7 +21,7 @@ h1 {
     gap: 12px;
 }
 
-.card {
+.card, .section {
     background: #1d293b;
     padding: 18px;
     border-radius: 12px;
@@ -43,11 +40,9 @@ h1 {
 
 .green { color: #00e5a0; }
 .red { color: #ff5252; }
+.yellow { color: #ffd54f; }
 
 .section {
-    background: #1d293b;
-    padding: 15px;
-    border-radius: 12px;
     margin-top: 18px;
     overflow-x: auto;
 }
@@ -55,13 +50,17 @@ h1 {
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 400px;
+    min-width: 550px;
 }
 
 td, th {
     padding: 12px;
     border-bottom: 1px solid #39465a;
     text-align: left;
+}
+
+th {
+    color: #00e5a0;
 }
 
 button {
@@ -76,51 +75,63 @@ button {
     color: #00e5a0;
     text-align: center;
 }
-</style>
-</head>
 
-<body>
+.buy {
+    color: #00e5a0;
+    font-weight: bold;
+}
 
-<h1>🚀 ALGO TRADING</h1>
-<p class="status" id="status">Loading Dashboard...</p>
+.wait {
+    color: #ffd54f;
+    font-weight: bold;
+}
 
-<div class="container">
+.no-data {
+    color: #ff5252;
+}
 
-<div class="card">
+@media(max-width: 500px) {
+    .value {
+        font-size: 19px;
+    }
+}
+</style></head><body><h1>🚀 ALGO TRADING</h1>
+<p class="status" id="status">Loading Dashboard...</p><div class="container"><div class="card">
 <div class="label">Starting Capital</div>
 <div class="value">₹10,000</div>
-</div>
-
-<div class="card">
+</div><div class="card">
 <div class="label">Available Cash</div>
 <div class="value green" id="cash">₹0</div>
-</div>
-
-<div class="card">
+</div><div class="card">
 <div class="label">Open Trades</div>
 <div class="value" id="open">0</div>
-</div>
-
-<div class="card">
+</div><div class="card">
 <div class="label">Closed Trades</div>
 <div class="value" id="closed">0</div>
-</div>
-
-<div class="card">
+</div><div class="card">
 <div class="label">Realized P&L</div>
 <div class="value" id="pnl">₹0</div>
-</div>
-
-<div class="card">
+</div><div class="card">
 <div class="label">Win Rate</div>
 <div class="value" id="winrate">0%</div>
-</div>
-
-</div>
-
-<div class="section">
-<h3>🟢 OPEN POSITIONS</h3>
-<table>
+</div></div><div class="section">
+<h3>📡 LIVE STOCK SIGNALS (16 STOCKS)</h3><table>
+<thead>
+<tr>
+<th>Stock</th>
+<th>Price</th>
+<th>Trend</th>
+<th>RSI</th>
+<th>Signal</th>
+</tr>
+</thead><tbody id="signals">
+<tr>
+<td colspan="5">Waiting for Python data...</td>
+</tr>
+</tbody>
+</table>
+</div><div class="section">
+<h3>🟢 OPEN POSITIONS</h3><table>
 <thead>
 <tr>
 <th>Stock</th>
@@ -129,14 +140,10 @@ button {
 <th>Stop Loss</th>
 <th>Target</th>
 </tr>
-</thead>
-<tbody id="positions"></tbody>
+</thead><tbody id="positions"></tbody>
 </table>
-</div>
-
-<div class="section">
-<h3>📊 TRADE HISTORY</h3>
-<table>
+</div><div class="section">
+<h3>📊 TRADE HISTORY</h3><table>
 <thead>
 <tr>
 <th>Stock</th>
@@ -144,18 +151,32 @@ button {
 <th>Exit</th>
 <th>P&L</th>
 </tr>
-</thead>
-<tbody id="history"></tbody>
+</thead><tbody id="history"></tbody>
 </table>
-</div>
+</div><div class="section">
+<h3>⚙️ Dashboard Control</h3><button onclick="loadData()">Refresh Data</button>
 
-<div class="section">
-<h3>⚙️ Dashboard Control</h3>
-<button onclick="loadData()">Refresh Data</button>
 <p id="updated">Last Update: --</p>
-</div>
+</div><script>
 
-<script>
+const stocks = [
+"RELIANCE.NS",
+"HDFCBANK.NS",
+"ICICIBANK.NS",
+"SBIN.NS",
+"TCS.NS",
+"INFY.NS",
+"TMPV.NS",
+"TMCV.NS",
+"AXISBANK.NS",
+"KOTAKBANK.NS",
+"BAJFINANCE.NS",
+"LT.NS",
+"BHARTIARTL.NS",
+"ITC.NS",
+"SUNPHARMA.NS",
+"HINDUNILVR.NS"
+];
 
 async function loadData() {
 
@@ -175,7 +196,7 @@ document.getElementById("cash").innerText =
 "₹" + Number(data.cash).toFixed(2);
 
 const positions = data.positions || {};
-const history = data.history || [];
+const history = data.history || {};
 
 document.getElementById("open").innerText =
 Object.keys(positions).length;
@@ -199,11 +220,60 @@ trade => Number(trade["P&L"]) > 0
 ).length;
 
 const winrate = history.length
-? (wins / history.length * 100)
+? wins / history.length * 100
 : 0;
 
 document.getElementById("winrate").innerText =
 winrate.toFixed(1) + "%";
+
+// STOCK SIGNALS
+
+const signals = data.signals || {};
+
+let signalHTML = "";
+
+stocks.forEach(stock => {
+
+const s = signals[stock];
+
+if (!s) {
+
+signalHTML += `
+<tr>
+<td>${stock}</td>
+<td>--</td>
+<td>--</td>
+<td>--</td>
+<td class="no-data">NO DATA</td>
+</tr>
+`;
+
+return;
+
+}
+
+let signalClass = "wait";
+
+if (s.signal === "BUY") {
+signalClass = "buy";
+}
+
+signalHTML += `
+<tr>
+<td>${stock}</td>
+<td>₹${Number(s.price).toFixed(2)}</td>
+<td>${s.trend ? "UP" : "DOWN"}</td>
+<td>${Number(s.rsi).toFixed(2)}</td>
+<td class="${signalClass}">${s.signal}</td>
+</tr>
+`;
+
+});
+
+document.getElementById("signals").innerHTML =
+signalHTML;
+
+// OPEN POSITIONS
 
 let posHTML = "";
 
@@ -223,6 +293,8 @@ posHTML += `
 
 document.getElementById("positions").innerHTML =
 posHTML || "<tr><td colspan='5'>No Open Trades</td></tr>";
+
+// TRADE HISTORY
 
 let historyHTML = "";
 
@@ -262,9 +334,8 @@ document.getElementById("status").innerText =
 }
 
 loadData();
-setInterval(loadData, 60000);
 
-</script>
+setInterval(loadData, 30000);
 
-</body>
+</script></body>
 </html>
