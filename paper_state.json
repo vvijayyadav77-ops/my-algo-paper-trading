@@ -265,11 +265,11 @@
     "AXISBANK.NS": "2026-11-20 11:06:00+05:30",
     "KOTAKBANK.NS": "2026-11-20 11:06:00+05:30",
     "BAJFINANCE.NS": "2026-11-20 11:06:00+05:30",
-    "LT.NS": "2026-11-20 11:05:00+05:30",
-    "BHARTIARTL.NS": "2026-11-20 11:05:00+05:30",
-    "ITC.NS": "2026-11-20 11:05:00+05:30",
-    "SUNPHARMA.NS": "2026-11-20 11:05:00+05:30",
-    "HINDUNILVR.NS": "2026-11-20 11:05:00+05:30"
+    "LT.NS": "2026-11-20 11:06:00+05:30",
+    "BHARTIARTL.NS": "2026-11-20 11:06:00+05:30",
+    "ITC.NS": "2026-11-20 11:06:00+05:30",
+    "SUNPHARMA.NS": "2026-11-20 11:06:00+05:30",
+    "HINDUNILVR.NS": "2026-11-20 11:06:00+05:30"
   },
   "signals": {
     "RELIANCE.NS": {
@@ -284,7 +284,7 @@
       "volume_ratio": 0.64,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:13.380706+05:30",
+      "updated": "2026-11-20T11:07:46.774606+05:30",
       "data_status": "FRESH DATA"
     },
     "HDFCBANK.NS": {
@@ -299,7 +299,7 @@
       "volume_ratio": 0.27,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:13.577739+05:30",
+      "updated": "2026-11-20T11:07:46.962651+05:30",
       "data_status": "FRESH DATA"
     },
     "ICICIBANK.NS": {
@@ -314,7 +314,7 @@
       "volume_ratio": 0.42,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:13.754289+05:30",
+      "updated": "2026-11-20T11:07:47.203873+05:30",
       "data_status": "FRESH DATA"
     },
     "SBIN.NS": {
@@ -329,7 +329,7 @@
       "volume_ratio": 0.62,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:14.000794+05:30",
+      "updated": "2026-11-20T11:07:47.448169+05:30",
       "data_status": "FRESH DATA"
     },
     "TCS.NS": {
@@ -344,7 +344,7 @@
       "volume_ratio": 0.84,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:14.212301+05:30",
+      "updated": "2026-11-20T11:07:47.684966+05:30",
       "data_status": "FRESH DATA"
     },
     "INFY.NS": {
@@ -359,7 +359,7 @@
       "volume_ratio": 1.01,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:14.435845+05:30",
+      "updated": "2026-11-20T11:07:47.895054+05:30",
       "data_status": "FRESH DATA"
     },
     "TMPV.NS": {
@@ -374,7 +374,7 @@
       "volume_ratio": 0.35,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:14.661523+05:30",
+      "updated": "2026-11-20T11:07:48.116365+05:30",
       "data_status": "FRESH DATA"
     },
     "TMCV.NS": {
@@ -389,7 +389,7 @@
       "volume_ratio": 1.03,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:14.854674+05:30",
+      "updated": "2026-11-20T11:07:48.313448+05:30",
       "data_status": "FRESH DATA"
     },
     "AXISBANK.NS": {
@@ -404,7 +404,7 @@
       "volume_ratio": 0.98,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:15.090681+05:30",
+      "updated": "2026-11-20T11:07:48.530482+05:30",
       "data_status": "FRESH DATA"
     },
     "KOTAKBANK.NS": {
@@ -419,7 +419,7 @@
       "volume_ratio": 0.58,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:15.310345+05:30",
+      "updated": "2026-11-20T11:07:48.757893+05:30",
       "data_status": "FRESH DATA"
     },
     "BAJFINANCE.NS": {
@@ -434,86 +434,86 @@
       "volume_ratio": 2.63,
       "signal": "WAIT",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "updated": "2026-11-20T11:07:15.540429+05:30",
+      "updated": "2026-11-20T11:07:48.951966+05:30",
       "data_status": "FRESH DATA"
     },
     "LT.NS": {
-      "price": 4187.0,
+      "price": 4192.0,
       "trend": true,
-      "rsi": 60.94,
-      "ema9": 4184.93,
-      "ema21": 4183.18,
-      "vwap": 4172.42,
-      "volume": 1799,
-      "volume_avg20": 4125.1,
-      "volume_ratio": 0.44,
+      "rsi": 62.12,
+      "ema9": 4186.34,
+      "ema21": 4183.98,
+      "vwap": 4172.54,
+      "volume": 4660,
+      "volume_avg20": 3742.2,
+      "volume_ratio": 1.25,
       "signal": "WAIT",
-      "candle_time": "2026-11-20 11:05:00+05:30",
-      "updated": "2026-11-20T11:06:42.362495+05:30",
+      "candle_time": "2026-11-20 11:06:00+05:30",
+      "updated": "2026-11-20T11:07:49.147235+05:30",
       "data_status": "FRESH DATA"
     },
     "BHARTIARTL.NS": {
-      "price": 2147.2,
+      "price": 2148.7,
       "trend": false,
-      "rsi": 36.88,
-      "ema9": 2148.16,
-      "ema21": 2148.35,
-      "vwap": 2146.6,
-      "volume": 7737,
-      "volume_avg20": 11600.65,
-      "volume_ratio": 0.67,
+      "rsi": 38.41,
+      "ema9": 2148.26,
+      "ema21": 2148.38,
+      "vwap": 2146.61,
+      "volume": 8682,
+      "volume_avg20": 11607.7,
+      "volume_ratio": 0.75,
       "signal": "WAIT",
-      "candle_time": "2026-11-20 11:05:00+05:30",
-      "updated": "2026-11-20T11:06:42.552907+05:30",
+      "candle_time": "2026-11-20 11:06:00+05:30",
+      "updated": "2026-11-20T11:07:49.348562+05:30",
       "data_status": "FRESH DATA"
     },
     "ITC.NS": {
-      "price": 298.1,
+      "price": 298.25,
       "trend": false,
-      "rsi": 26.09,
-      "ema9": 298.36,
-      "ema21": 298.45,
+      "rsi": 36.0,
+      "ema9": 298.34,
+      "ema21": 298.43,
       "vwap": 298.84,
-      "volume": 28919,
-      "volume_avg20": 22204.35,
-      "volume_ratio": 1.3,
+      "volume": 9669,
+      "volume_avg20": 22297.85,
+      "volume_ratio": 0.43,
       "signal": "WAIT",
-      "candle_time": "2026-11-20 11:05:00+05:30",
-      "updated": "2026-11-20T11:06:42.756130+05:30",
+      "candle_time": "2026-11-20 11:06:00+05:30",
+      "updated": "2026-11-20T11:07:49.556516+05:30",
       "data_status": "FRESH DATA"
     },
     "SUNPHARMA.NS": {
-      "price": 1885.0,
+      "price": 1885.4,
       "trend": false,
-      "rsi": 44.32,
-      "ema9": 1885.66,
-      "ema21": 1886.46,
-      "vwap": 1891.41,
-      "volume": 998,
-      "volume_avg20": 5526.05,
-      "volume_ratio": 0.18,
+      "rsi": 46.15,
+      "ema9": 1885.61,
+      "ema21": 1886.36,
+      "vwap": 1891.37,
+      "volume": 2069,
+      "volume_avg20": 5353.6,
+      "volume_ratio": 0.39,
       "signal": "WAIT",
-      "candle_time": "2026-11-20 11:05:00+05:30",
-      "updated": "2026-11-20T11:06:42.996321+05:30",
+      "candle_time": "2026-11-20 11:06:00+05:30",
+      "updated": "2026-11-20T11:07:49.772503+05:30",
       "data_status": "FRESH DATA"
     },
     "HINDUNILVR.NS": {
-      "price": 2045.0,
+      "price": 2045.6,
       "trend": false,
-      "rsi": 21.49,
-      "ema9": 2046.58,
-      "ema21": 2047.56,
-      "vwap": 2049.93,
-      "volume": 2956,
-      "volume_avg20": 3693.55,
-      "volume_ratio": 0.8,
+      "rsi": 32.95,
+      "ema9": 2046.38,
+      "ema21": 2047.38,
+      "vwap": 2049.9,
+      "volume": 2450,
+      "volume_avg20": 3741.9,
+      "volume_ratio": 0.65,
       "signal": "WAIT",
-      "candle_time": "2026-11-20 11:05:00+05:30",
-      "updated": "2026-11-20T11:06:43.185474+05:30",
+      "candle_time": "2026-11-20 11:06:00+05:30",
+      "updated": "2026-11-20T11:07:49.970925+05:30",
       "data_status": "FRESH DATA"
     }
   },
-  "updated": "2026-11-20T11:07:15.540465+05:30",
+  "updated": "2026-11-20T11:07:49.970952+05:30",
   "capital": 10000.0,
   "bot_status": "V6 TRADING",
   "square_off_status": "COMPLETED",
@@ -523,128 +523,128 @@
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 73.4,
-      "checked_at": "2026-11-20T11:07:13.380603+05:30"
+      "age_seconds": 106.8,
+      "checked_at": "2026-11-20T11:07:46.774483+05:30"
     },
     "HDFCBANK.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 73.6,
-      "checked_at": "2026-11-20T11:07:13.577635+05:30"
+      "age_seconds": 107.0,
+      "checked_at": "2026-11-20T11:07:46.962529+05:30"
     },
     "ICICIBANK.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 73.8,
-      "checked_at": "2026-11-20T11:07:13.754188+05:30"
+      "age_seconds": 107.2,
+      "checked_at": "2026-11-20T11:07:47.203771+05:30"
     },
     "SBIN.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 74.0,
-      "checked_at": "2026-11-20T11:07:14.000691+05:30"
+      "age_seconds": 107.4,
+      "checked_at": "2026-11-20T11:07:47.448067+05:30"
     },
     "TCS.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 74.2,
-      "checked_at": "2026-11-20T11:07:14.212194+05:30"
+      "age_seconds": 107.7,
+      "checked_at": "2026-11-20T11:07:47.684861+05:30"
     },
     "INFY.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 74.4,
-      "checked_at": "2026-11-20T11:07:14.435739+05:30"
+      "age_seconds": 107.9,
+      "checked_at": "2026-11-20T11:07:47.894947+05:30"
     },
     "TMPV.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 74.7,
-      "checked_at": "2026-11-20T11:07:14.661422+05:30"
+      "age_seconds": 108.1,
+      "checked_at": "2026-11-20T11:07:48.116259+05:30"
     },
     "TMCV.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 74.9,
-      "checked_at": "2026-11-20T11:07:14.854569+05:30"
+      "age_seconds": 108.3,
+      "checked_at": "2026-11-20T11:07:48.313344+05:30"
     },
     "AXISBANK.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 75.1,
-      "checked_at": "2026-11-20T11:07:15.090573+05:30"
+      "age_seconds": 108.5,
+      "checked_at": "2026-11-20T11:07:48.530380+05:30"
     },
     "KOTAKBANK.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 75.3,
-      "checked_at": "2026-11-20T11:07:15.310240+05:30"
+      "age_seconds": 108.8,
+      "checked_at": "2026-11-20T11:07:48.757790+05:30"
     },
     "BAJFINANCE.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
       "candle_time": "2026-11-20 11:06:00+05:30",
-      "age_seconds": 75.5,
-      "checked_at": "2026-11-20T11:07:15.540322+05:30"
+      "age_seconds": 109.0,
+      "checked_at": "2026-11-20T11:07:48.951860+05:30"
     },
     "LT.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
-      "candle_time": "2026-11-20 11:05:00+05:30",
-      "age_seconds": 102.4,
-      "checked_at": "2026-11-20T11:06:42.362384+05:30"
+      "candle_time": "2026-11-20 11:06:00+05:30",
+      "age_seconds": 109.1,
+      "checked_at": "2026-11-20T11:07:49.147134+05:30"
     },
     "BHARTIARTL.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
-      "candle_time": "2026-11-20 11:05:00+05:30",
-      "age_seconds": 102.6,
-      "checked_at": "2026-11-20T11:06:42.552799+05:30"
+      "candle_time": "2026-11-20 11:06:00+05:30",
+      "age_seconds": 109.3,
+      "checked_at": "2026-11-20T11:07:49.348445+05:30"
     },
     "ITC.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
-      "candle_time": "2026-11-20 11:05:00+05:30",
-      "age_seconds": 102.8,
-      "checked_at": "2026-11-20T11:06:42.756021+05:30"
+      "candle_time": "2026-11-20 11:06:00+05:30",
+      "age_seconds": 109.6,
+      "checked_at": "2026-11-20T11:07:49.556414+05:30"
     },
     "SUNPHARMA.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
-      "candle_time": "2026-11-20 11:05:00+05:30",
-      "age_seconds": 103.0,
-      "checked_at": "2026-11-20T11:06:42.996213+05:30"
+      "candle_time": "2026-11-20 11:06:00+05:30",
+      "age_seconds": 109.8,
+      "checked_at": "2026-11-20T11:07:49.772402+05:30"
     },
     "HINDUNILVR.NS": {
       "source": "Yahoo Finance",
       "status": "FRESH DATA",
       "message": "DATA VERIFIED",
-      "candle_time": "2026-11-20 11:05:00+05:30",
-      "age_seconds": 103.2,
-      "checked_at": "2026-11-20T11:06:43.185335+05:30"
+      "candle_time": "2026-11-20 11:06:00+05:30",
+      "age_seconds": 110.0,
+      "checked_at": "2026-11-20T11:07:49.970824+05:30"
     }
   }
 }
