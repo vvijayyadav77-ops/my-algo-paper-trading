@@ -728,9 +728,9 @@
       "data_status": "FRESH DATA"
     }
   },
-  "updated": "2026-11-20T15:58:57.297165+05:30",
+  "updated": "2026-11-21T05:13:33.901865+05:30",
   "capital": 10000.0,
-  "bot_status": "SESSION COMPLETED",
+  "bot_status": "MARKET CLOSED",
   "square_off_status": "COMPLETED",
   "data_health": {
     "RELIANCE.NS": {
