@@ -285,7 +285,7 @@
       "updated": "2026-11-19T14:59:29.442575+05:30"
     }
   },
-  "updated": "2026-11-20T09:52:31.713650+05:30",
+  "updated": "2026-11-20T09:53:37.121796+05:30",
   "capital": 10000.0,
   "bot_status": "V6 TRADING",
   "square_off_status": "COMPLETED",
@@ -296,7 +296,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:29.319315+05:30"
+      "checked_at": "2026-11-20T09:53:34.546147+05:30"
     },
     "HDFCBANK.NS": {
       "source": "Yahoo Finance",
@@ -304,7 +304,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:29.492733+05:30"
+      "checked_at": "2026-11-20T09:53:34.797903+05:30"
     },
     "ICICIBANK.NS": {
       "source": "Yahoo Finance",
@@ -312,7 +312,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:29.677793+05:30"
+      "checked_at": "2026-11-20T09:53:34.961850+05:30"
     },
     "SBIN.NS": {
       "source": "Yahoo Finance",
@@ -320,7 +320,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:29.833861+05:30"
+      "checked_at": "2026-11-20T09:53:35.136973+05:30"
     },
     "TCS.NS": {
       "source": "Yahoo Finance",
@@ -328,7 +328,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:30.015261+05:30"
+      "checked_at": "2026-11-20T09:53:35.367064+05:30"
     },
     "INFY.NS": {
       "source": "Yahoo Finance",
@@ -336,7 +336,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:30.189481+05:30"
+      "checked_at": "2026-11-20T09:53:35.557242+05:30"
     },
     "TMPV.NS": {
       "source": "Yahoo Finance",
@@ -344,7 +344,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:30.348942+05:30"
+      "checked_at": "2026-11-20T09:53:35.728802+05:30"
     },
     "TMCV.NS": {
       "source": "Yahoo Finance",
@@ -352,7 +352,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:30.527329+05:30"
+      "checked_at": "2026-11-20T09:53:35.912434+05:30"
     },
     "AXISBANK.NS": {
       "source": "Yahoo Finance",
@@ -360,7 +360,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:30.657761+05:30"
+      "checked_at": "2026-11-20T09:53:36.082023+05:30"
     },
     "KOTAKBANK.NS": {
       "source": "Yahoo Finance",
@@ -368,7 +368,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:30.791216+05:30"
+      "checked_at": "2026-11-20T09:53:36.195510+05:30"
     },
     "BAJFINANCE.NS": {
       "source": "Yahoo Finance",
@@ -376,7 +376,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:30.972360+05:30"
+      "checked_at": "2026-11-20T09:53:36.368184+05:30"
     },
     "LT.NS": {
       "source": "Yahoo Finance",
@@ -384,7 +384,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:31.152031+05:30"
+      "checked_at": "2026-11-20T09:53:36.485381+05:30"
     },
     "BHARTIARTL.NS": {
       "source": "Yahoo Finance",
@@ -392,7 +392,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:31.284995+05:30"
+      "checked_at": "2026-11-20T09:53:36.658657+05:30"
     },
     "ITC.NS": {
       "source": "Yahoo Finance",
@@ -400,7 +400,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:31.404967+05:30"
+      "checked_at": "2026-11-20T09:53:36.829737+05:30"
     },
     "SUNPHARMA.NS": {
       "source": "Yahoo Finance",
@@ -408,7 +408,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:31.583210+05:30"
+      "checked_at": "2026-11-20T09:53:36.936436+05:30"
     },
     "HINDUNILVR.NS": {
       "source": "Yahoo Finance",
@@ -416,7 +416,7 @@
       "message": "TRADING BLOCKED",
       "candle_time": null,
       "age_seconds": null,
-      "checked_at": "2026-11-20T09:52:31.713609+05:30"
+      "checked_at": "2026-11-20T09:53:37.121762+05:30"
     }
   }
 }
